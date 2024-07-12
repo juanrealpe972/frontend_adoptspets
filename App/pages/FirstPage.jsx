@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, Alert, Text, Image} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import LinkBoton from '../../components/atoms/button/linkboton';
-import checkConnectivity from '../../components/error/errorHandler';
-import {Typography} from '../../components/atoms/Typography/textGlobal';
-import LoginScreen from '../LoginScreen';
+
+import LinkBoton from '../components/atoms/button/linkboton';
+import checkConnectivity from '../components/error/errorHandler';
+import {Typography} from '../components/atoms/Typography/textGlobal';
+import LoginPage from './LoginPage';
 
 export default function FirstPage() {
   const [loginVisible, setLoginVisible] = useState(null);
+  const navigation = useNavigation()
 
   useEffect(() => {
     const onConnected = () => console.log('conectado a internet');
@@ -32,7 +34,7 @@ export default function FirstPage() {
           ADOPTS PETS
         </Text>
         <Image
-          source={require('../../resources/logo_adoptpets.jpg')}
+          source={require('../resources/logo_adoptpets.jpg')}
           style={styles.logo}
         />
         <Text style={[Typography.subtitle, styles.customSubtitle]}>
@@ -41,24 +43,21 @@ export default function FirstPage() {
         <View style={styles.footer}>
           <LinkBoton press={() => setLoginVisible(true)} text={'Iniciar Sesión'} />
           {loginVisible && (
-            <LoginScreen
+            <LoginPage
               visible={true}
               onClose={() => setLoginVisible(false)}
             />
           )}
         </View>
         <View style={styles.footer1}>
-          <LinkBoton press={() => setLoginVisible(true)} text={'Registrarse'} />
-          {loginVisible && (
-            <LoginScreen
-              visible={true}
-              onClose={() => setLoginVisible(false)}
-            />
-          )}
+          <LinkBoton press={() => navigation.navigate("Registro")} text={'Registrarse'} />
+        </View>
+        <View style={styles.footer2}>
+          <LinkBoton press={() => navigation.navigate("Invitado")} text={'Ingresar como invitado'} />
         </View>
       </View>
     </View>
-  );
+  );  
 }
 
 const styles = StyleSheet.create({
@@ -96,7 +95,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 100,
+    paddingBottom: 110,
+  },
+  footer2: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    alignItems: 'center',
+    paddingBottom: 22,
   },
   logo: {
     width: 350,

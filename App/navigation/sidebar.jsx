@@ -1,149 +1,151 @@
-import React from 'react';
-import { View, Image, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Modal, View, StyleSheet, Animated, TouchableWithoutFeedback, Image, Text, TouchableOpacity , Alert} from 'react-native';
+import icono from '../resources/logo_adoptpets.jpg';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Entypo from 'react-native-vector-icons/Entypo'; 
-import SubastaScreen from '../Screen/SubastaScreen';
-import OfertaScreen from '../Screen/OfertaScreen';
-import TabNavigationCom from './TabsNavigationCom';
-import TabNavigationVen from './TabsNavigationVen';
-import icono from '../resources/IconoSubCoffee.png';
-import subasta from '../resources/auction.png';
-import TerminosyCondiciones from "../components/templates/terminosycondiciones";
-import Soporte from "../components/templates/soporte";
+import Entypo from 'react-native-vector-icons/Entypo';
 
+const SideBar = ({ visible, onClose }) => {
+  const [slideAnim] = useState(new Animated.Value(-300));
+  const [selectedButton, setSelectedButton] = useState('');
+  const navigation = useNavigation();
 
+  useEffect(() => {
+    if (visible) {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(slideAnim, {
+        toValue: -500,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [visible]);
 
+  const handlePress = (screenName) => {
+    navigation.navigate(screenName);
+    onClose();
+    setSelectedButton(screenName);
+  };
 
-const Drawer = createDrawerNavigator();
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      Alert.alert("Cierre de Sesión", "Has cerrado sesión exitosamente.");
+      navigation.navigate('FirstPage');
+      onClose();
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      Alert.alert("Error", "Hubo un problema al cerrar sesión. Intenta de nuevo.");
+    }
+  };
 
-const CustomDrawerContent = (props) => (
-  <DrawerContentScrollView {...props}>
-    <View style={{ padding: 12, alignItems: 'center' }}>
-      <Image 
-        source={icono}  
-        style={{ width: 90, height: 90 }}
-      />
-      <View style={styles.divider} />
-    </View>
-    <DrawerItemList {...props} />
-    <TouchableOpacity
-      style={styles.logoutButton}
-      onPress={() => {
-        
-        console.log('Cerrar sesión clickeado');
-      }}
+  const buttonStyle = (buttonName) => {
+    return {
+      ...styles.button,
+      backgroundColor: selectedButton === buttonName ? '#E89551' : 'transparent',
+    };
+  };
+
+  const textStyle = (buttonName) => {
+    return {
+      ...styles.buttonText,
+      color: selectedButton === buttonName ? 'white' : 'black',
+    };
+  };
+
+  return (
+    <Modal
+      transparent={true}
+      visible={visible}
+      animationType="none"
+      onRequestClose={onClose}
     >
-      <Text style={styles.logoutText}>Cerrar Sesión</Text>
-    </TouchableOpacity>
-  </DrawerContentScrollView>
-);
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.overlay}>
+          <TouchableWithoutFeedback>
+            <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
+              <View style={styles.imageContainer}>
+                <Image 
+                  source={icono}  
+                  style={styles.iconImage}
+                />
+              </View>
+              <View style={styles.divider} />
+              <TouchableOpacity
+                style={buttonStyle('Terminos')}
+                onPress={() => handlePress('Terminos')}
+              >
+                <Ionicons name="newspaper-outline" size={24} color={selectedButton === 'Terminos' ? 'white' : 'black'} style={styles.buttonIcon} />
+                <Text style={textStyle('Terminos')}>Terminos y Condiciones</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={buttonStyle('Soporte')}
+                onPress={() => handlePress('Soporte')}
+              >
+                <Entypo name="tools" size={24} color={selectedButton === 'Soporte' ? 'white' : 'black'} style={styles.buttonIcon} />
+                <Text style={textStyle('Soporte')}>Soporte</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                <Ionicons name="log-out-outline" size={24} color="black" style={styles.buttonIcon} />
+                <Text style={styles.buttonText}>Cerrar Sesión</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+};
 
 const styles = StyleSheet.create({
-  divider: {
-    width: '100%',
-    height: 1,
-    backgroundColor: '#d3d3d3',
-    marginVertical: 10,
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+    justifyContent: 'flex-start',
   },
-  logoutButton: {
-    padding: 10,
-    marginTop: 15,
-    backgroundColor: '#f0f0f0',
+  sidebar: {
+    width: 310,
+    height: '100%',
+    backgroundColor: 'white',
+    padding: 20,
+  },
+  imageContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 5
+    marginBottom: 10,
   },
-  logoutText: {
-    color: 'red',
+  iconImage: {
+    width: 120,
+    height: 120,
+    margin: 10,
+  },
+  divider: {
+    borderBottomColor: 'gray',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginBottom: 20,
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 25,
+    paddingVertical: 10,
+    paddingHorizontal:4,
+    borderRadius:15
+  },
+  buttonText: {
     fontSize: 16,
-  }
+    color: 'black',
+    marginLeft: 2,
+  },
+  buttonIcon: {
+    marginRight: 10,
+  },
 });
-
-const DrawerNavigatorOptions = (route) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? "Inicio";
-  return {
-    swipeEnabled: routeName === "Inicio",
-    gestureEnabled: routeName === "Inicio",
-  };
-};
-
-const CompradorDrawer = () => (
-  <Drawer.Navigator
-    drawerContent={(props) => <CustomDrawerContent {...props} />}
-    screenOptions={({ route }) => ({
-      ...DrawerNavigatorOptions(route),
-      headerShown: false, 
-      drawerIcon: ({ focused, color, size }) => {
-        let iconName;
-        if (route.name === 'Subastas') {
-          return <Image source={subasta} style={{ width: size, height: size, tintColor: color }} />;
-        }
-        if (route.name === 'Inicio') {
-          iconName = focused ? 'home' : 'home-outline';
-        } else if (route.name === 'Perfil') {
-          iconName = focused ? 'person' : 'person-outline';
-        } else if (route.name === 'Terminos y Condiciones') {
-          return <Ionicons name={focused ? 'paper' : 'newspaper-outline'} size={size} color={color} />;
-    a
-        } else if (route.name === 'Soporte') {
-          return <Entypo name={focused ? 'tool' : 'tools'} size={size} color={color} />;
-        }
-        
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-      drawerActiveTintColor: 'green',
-      drawerInactiveTintColor: 'gray',
-      drawerStyle: {
-        backgroundColor: '#f0f0f0',
-      },
-    })}
-  >
-    <Drawer.Screen name="Inicio" component={TabNavigationCom} />
-    <Drawer.Screen name="Subastas" component={SubastaScreen} />
-    <Drawer.Screen name="Terminos y Condiciones" component={TerminosyCondiciones} />
-    <Drawer.Screen name="Soporte" component={Soporte} />
-  </Drawer.Navigator>
-);
-
-const VendedorDrawer = () => (
-  <Drawer.Navigator
-    drawerContent={(props) => <CustomDrawerContent {...props} />}
-    screenOptions={({ route }) => ({
-      ...DrawerNavigatorOptions(route),
-      headerShown: false,
-      drawerIcon: ({ focused, color, size }) => {
-        let iconName;
-        if (route.name === 'Ofertas') {
-          iconName = focused ? 'pricetag' : 'pricetag-outline';
-        } else if (route.name === 'Perfil') {
-          iconName = focused ? 'person' : 'person-outline';
-        } else if (route.name === 'Inicio') {
-          iconName = focused ? 'home' : 'home-outline';
-        } else if (route.name === 'Terminos y Condiciones') {
-          iconName = focused ? 'home' : 'home-outline';
-        } else if (route.name === 'Soporte') {
-          return <Entypo name={focused ? 'tool' : 'tools'} size={size} color={color} />;
-        }
-        
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-      drawerActiveTintColor: 'green',
-      drawerInactiveTintColor: 'gray',
-      drawerStyle: {
-        backgroundColor: '#f0f0f0',
-      },
-    })}
-  >
-    <Drawer.Screen name="Inicio" component={TabNavigationVen} />
-    <Drawer.Screen name="Ofertas" component={OfertaScreen} />
-    <Drawer.Screen name="Terminos y Condiciones" component={TerminosyCondiciones} />
-    <Drawer.Screen name="Soporte" component={Soporte} />
-  </Drawer.Navigator>
-);
-
-const SideBar = ({ userType }) => {
-  return userType === "comprador" ? <CompradorDrawer /> : <VendedorDrawer />;
-};
 
 export default SideBar;

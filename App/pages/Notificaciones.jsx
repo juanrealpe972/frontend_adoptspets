@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Alert, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IP } from '../../Api/context/ip';
+import { IP } from '../Api/context/ip';
 
 const ip = IP;
 

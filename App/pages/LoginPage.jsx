@@ -16,12 +16,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomModal from '../components/modal/modal';
 import LinkBoton from '../components/atoms/button/linkboton';
 
-import {IP} from '../Api/context/ip';
-// const ip = IP;
+const ip = "http://192.168.1.11:3000";
 
-const ip = "http://192.168.1.4:3000";
-
-const LoginScreen = ({visible, onClose}) => {
+const LoginPage = ({visible, onClose}) => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
@@ -216,6 +213,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  boton: {
+    backgroundColor: '#000',
+    fontSize: 15
+  }
 });
 
-export default LoginScreen;
+export default LoginPage;

@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import React from 'react';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 const Boton = (props) => {
   return (
@@ -13,8 +13,6 @@ const Boton = (props) => {
     </View>
   );
 }
-
-export default Boton;
 
 const styles = StyleSheet.create({
   boton: {
@@ -32,7 +30,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   contenedor: {
-    justifyContent:'center',
-    alignItems:'center'
-  }
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
+
+export default Boton;

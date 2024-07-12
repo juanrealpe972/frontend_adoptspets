@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomHeader from "./header";
-import Notificaciones from "../components/templates/notificaciones";
+import Notificaciones from "../pages/Notificaciones";
 
 const ScreenWithHeader = ({ component: Component, userName, ...props }) => {
   const [modalVisible, setModalVisible] = useState(false);

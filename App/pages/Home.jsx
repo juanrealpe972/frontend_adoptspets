@@ -9,14 +9,12 @@ import {
   Image,
 } from 'react-native';
 import axios from 'axios';
-import CustomModalPets from '../modal/CustomModalPets';
 
-const ip = "http://192.168.1.4:3000";
+const ip = "http://192.168.1.11:3000";
 
 function Home({ navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);
 
   const URL = `${ip}/v1/petsactivos`;
@@ -36,17 +34,8 @@ function Home({ navigation }) {
     getPetsAxios();
   }, []);
 
-  const handlePetPress = pet => {
-    setSelectedPet(pet);
-    setShowModal(true);
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
   const handlePressAdoptar = () => {
-    navigation.navigate('Adoptar', { pet: selectedPet });
+    navigation.navigate('Pet', { pet: selectedPet });
   };
 
   return (
@@ -58,7 +47,7 @@ function Home({ navigation }) {
           data={data}
           keyExtractor={item => item.pk_id_mas.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handlePetPress(item)}>
+            <TouchableOpacity>
               <View style={styles.petCard}>
                 <Image
                   source={{ uri: `${ip}/pets/${item.imagen_pet}` }}
@@ -68,7 +57,7 @@ function Home({ navigation }) {
                 <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
                 <Text style={styles.petCategory}>{item.nombre_cate}</Text>
                 <Text style={styles.petBreed}>{item.nombre_raza}</Text>
-                <TouchableOpacity style={styles.adoptButton} onPress={() => handlePetPress(item)}>
+                <TouchableOpacity style={styles.adoptButton} onPress={() => handlePressAdoptar()}>
                   <Text style={styles.adoptButtonText}>Visualizar</Text>
                 </TouchableOpacity>
               </View>
@@ -76,36 +65,6 @@ function Home({ navigation }) {
           )}
         />
       )}
-
-      <CustomModalPets
-        visible={showModal}
-        onClose={handleModalClose}
-        title="Detalles de la mascota">
-        {selectedPet && (
-          <View>
-            <Image
-              source={{ uri: `${ip}/pets/${selectedPet.imagen_pet}` }}
-              style={styles.modalImage}
-            />
-            <View style={styles.infoContainer}>
-              <Text style={styles.modalText}>Nombre: {selectedPet.nombre_mas}</Text>
-            </View>
-            <View style={styles.smallInfoContainer}>
-              <Text style={styles.smallInfoText}>Edad: {selectedPet.edad_mas} meses</Text>
-              <Text style={styles.smallInfoText}>Tamaño: {selectedPet.tamano_mas} cm</Text>
-              <Text style={styles.smallInfoText}>Peso: {selectedPet.peso_mas} kg</Text>
-            </View>
-            <Text style={styles.modalText}>Descripción: {selectedPet.descripcion_mas}</Text>
-            <View style={styles.infoContainer}>
-              <Text style={styles.modalText}>Vacunación: {selectedPet.vacunacion_mas}</Text>
-              <Text style={styles.modalText}>Esterilización: {selectedPet.esterilizacion_castracion_mas}</Text>
-            </View>
-            <TouchableOpacity style={styles.adoptButton} onPress={handlePressAdoptar}>
-              <Text style={styles.adoptButtonText}>Ir a Adoptar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </CustomModalPets>
     </View>
   );
 }
@@ -151,7 +110,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   adoptButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#06AEF4',
     paddingVertical: 10,
     paddingHorizontal: 20,
     alignItems: 'center',

@@ -19,7 +19,6 @@ const CustomModal = ({ visible, onClose, children }) => {
     }
   }, [visible]);
 
-  // Evita el renderizado del Modal hasta que sea visible
   if (!visible) {
     return null;
   }
