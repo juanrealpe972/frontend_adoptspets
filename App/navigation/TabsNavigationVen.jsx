@@ -6,9 +6,9 @@ import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
 
-import iconNotifi from '../resources/notificacionesIcono.png';
+import iconNoti from "../resources/notificacionesIcono.png"
 import iconSub from '../resources/logo_adoptpets.jpg';
-import SideBar from "./sidebar";
+import SideBar from "./SideBar";
 import PerfilPage from "../pages/PerfilPage";
 import Home from "../pages/Home";
 
@@ -42,32 +42,28 @@ const TabNavigationVen = () => {
           name="ADOPTS PETS"
           component={Home}
           options={{
-            tabBarLabel: 'ADOPTS PETS', 
-            tabBarLabelStyle: { color: '#FFF' }, 
-            headerTitle: () => (
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Image
-                  source={iconSub}
-                  style={{ width: 45, height: 45,  marginLeft: 6, borderRadius: 10000 }}
-                />
-                <Text style={{ color:'#FFF', fontSize: 26, fontWeight: 'bold', marginLeft: 8 }}>
-                  ADOPTS PETS
-                </Text>
-              </View>
-            ),
+            tabBarLabel: 'ADOPTS PETS',
+            tabBarLabelStyle: { color: '#FFF' },
             headerStyle: { backgroundColor: '#E89551' },
-            headerTitleStyle: { color: '#FFF' , fontSize:25, fontWeight:'bold'}, 
-            headerRight: () => (
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('Notificaciones')}>
-                  <Image
-                    source={iconNotifi}
-                    style={{ width: 26, height: 26, tintColor: 'white', marginRight: 16 }}
-                  />
-                </TouchableOpacity>
+            headerTitleContainerStyle: { flex: 1, justifyContent: 'center' },
+            headerTitle: () => (
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
                 <TouchableOpacity onPress={() => setIsSideBarVisible(true)}>
                   <Feather name="list" size={26} color="#FFF" />
                 </TouchableOpacity>
+                <View style={{ flex: 1, alignItems: 'center' }}>
+                  <Text style={{ color:'#FFF', fontSize: 26, fontWeight: 'bold' }}>
+                    ADOPTS PETS
+                  </Text>
+                </View>
+              </View>
+            ),
+            headerRight: () => (
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}>
+                <Image
+                  source={iconSub}
+                  style={{ width: 40, height: 40, marginLeft: 6, borderRadius: 10000 }}
+                />
               </View>
             ),
           }}

@@ -3,23 +3,34 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { IP } from "../api/IP";
+import { useAuthContext } from "../context/AuthContext";
+import { useNavigation } from '@react-navigation/native';
+
 const PerfilPage = () => {
   const [userData, setUserData] = useState({});
   const [currentUser, setCurrentUser] = useState({});
-  const ip = "http://192.168.1.11:3000";
-  const id = 1084251889;
+  const { setIdUser } = useAuthContext();
+  const navigation = useNavigation();
+
+  const ahoraIniciar = (data) => {
+    setIdUser(data);
+    navigation.navigate('Registro', { mode: "update" });
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${ip}/v1/user/${id}`);
-        if (response.data && response.data.data.length > 0) {
-          setUserData(response.data.data[0]);
-        }
-
-        const jsonValue = await AsyncStorage.getItem('usuarios');
-        if (jsonValue != null) {
-          setCurrentUser(JSON.parse(jsonValue));
+        const jsonValue = await AsyncStorage.getItem('usuario');
+        if (jsonValue !== null) {
+          const userData = JSON.parse(jsonValue);
+          const response = await axios.get(`${IP}/v1/user/${userData.pk_id_user}`);
+          if (response.data && response.data.data.length > 0) {
+            setUserData(response.data.data[0]);
+          }
+          setCurrentUser(userData); 
+        } else {
+          console.log('No se encontraron datos de usuario en AsyncStorage');
         }
       } catch (e) {
         console.error("Error fetching user data:", e);
@@ -31,7 +42,7 @@ const PerfilPage = () => {
   const renderUpdateButton = () => {
     if (userData.pk_id_user === currentUser.pk_id_user) {
       return (
-        <TouchableOpacity style={styles.updateButton}>
+        <TouchableOpacity style={styles.updateButton} onPress={() => ahoraIniciar(userData)}>
           <Text style={styles.updateButtonText}>Actualizar Perfil</Text>
         </TouchableOpacity>
       );
@@ -156,32 +167,6 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 24,
     marginVertical: 8,
-  },
-  infoText: {
-    color: "black",
-    fontSize: 16,
-  },
-  infoContainer: {
-    flexDirection: "row",
-    marginVertical: 6,
-    alignItems: "center",
-  },
-  statsContainer: {
-    flexDirection: "row",
-    paddingVertical: 8,
-  },
-  statItem: {
-    flexDirection: "column",
-    alignItems: "center",
-    marginHorizontal: 12,
-  },
-  statValue: {
-    fontSize: 24,
-    color: "blue",
-  },
-  statLabel: {
-    fontSize: 16,
-    color: "blue",
   },
   updateButton: {
     width: 180,

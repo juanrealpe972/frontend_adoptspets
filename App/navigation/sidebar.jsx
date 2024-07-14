@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, StyleSheet, Animated, TouchableWithoutFeedback, Image, Text, TouchableOpacity , Alert} from 'react-native';
+import { Modal, View, StyleSheet, Animated, TouchableWithoutFeedback, Image, Text, TouchableOpacity, Alert } from 'react-native';
 import icono from '../resources/logo_adoptpets.jpg';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Entypo from 'react-native-vector-icons/Entypo';
+import iconNoti from "../resources/notificacionesIcono.png";
 
 const SideBar = ({ visible, onClose }) => {
   const [slideAnim] = useState(new Animated.Value(-300));
   const [selectedButton, setSelectedButton] = useState('');
+  const [userAuth, setUserAuth] = useState({});
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -25,6 +27,14 @@ const SideBar = ({ visible, onClose }) => {
         useNativeDriver: true,
       }).start();
     }
+    const getUser = async () => {
+      const jsonValue = await AsyncStorage.getItem('usuario');
+      const userData = JSON.parse(jsonValue);
+      if (userData) {
+        setUserAuth(userData);
+      }
+    }
+    getUser();
   }, [visible]);
 
   const handlePress = (screenName) => {
@@ -71,8 +81,8 @@ const SideBar = ({ visible, onClose }) => {
           <TouchableWithoutFeedback>
             <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
               <View style={styles.imageContainer}>
-                <Image 
-                  source={icono}  
+                <Image
+                  source={icono}
                   style={styles.iconImage}
                 />
               </View>
@@ -84,6 +94,15 @@ const SideBar = ({ visible, onClose }) => {
                 <Ionicons name="newspaper-outline" size={24} color={selectedButton === 'Terminos' ? 'white' : 'black'} style={styles.buttonIcon} />
                 <Text style={textStyle('Terminos')}>Terminos y Condiciones</Text>
               </TouchableOpacity>
+              {userAuth.rol_user === 'admin' && (
+                <TouchableOpacity
+                  style={buttonStyle('MascotasPorAdoptar')}
+                  onPress={() => handlePress('MascotasPorAdoptar')}
+                >
+                  <Image source={iconNoti} style={styles.buttonIcon} />
+                  <Text style={textStyle('MascotasPorAdoptar')}>Mascotas por adoptar</Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 style={buttonStyle('Soporte')}
                 onPress={() => handlePress('Soporte')}
@@ -106,7 +125,7 @@ const SideBar = ({ visible, onClose }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'flex-start',
   },
   sidebar: {
@@ -121,8 +140,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   iconImage: {
-    width: 120,
-    height: 120,
+    width: 180,
+    height: 180,
     margin: 10,
   },
   divider: {
@@ -135,8 +154,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 25,
     paddingVertical: 10,
-    paddingHorizontal:4,
-    borderRadius:15
+    paddingHorizontal: 4,
+    borderRadius: 15,
   },
   buttonText: {
     fontSize: 16,
@@ -145,6 +164,8 @@ const styles = StyleSheet.create({
   },
   buttonIcon: {
     marginRight: 10,
+    width: 24,
+    height: 24,
   },
 });
 

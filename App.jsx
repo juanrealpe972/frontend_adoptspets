@@ -1,21 +1,21 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import SplashScreen from "./splashScreen";
 import FirstPage from "./App/pages/FirstPage.jsx";
 import TabNavigationVen from "./App/navigation/TabsNavigationVen.jsx";
-import SideBar from "./App/navigation/sidebar.jsx";
+import SideBar from "./App/navigation/SideBar.jsx";
 import ForgotPassword from "./App/pages/Recuperar-Password.jsx";
 import Notificaciones from "./App/pages/Notificaciones.jsx";
 import TerminosyCondiciones from "./App/pages/TerminosyCondiciones.jsx";
 import Soporte from "./App/pages/Soporte.jsx";
-import { UserProvider } from "./App/Api/context/UserContext.jsx";
 import LoginPage from "./App/pages/LoginPage.jsx";
 import InvitadoPage from "./App/pages/InvitadoPage.jsx";
-import RegisterPage from "./App/pages/RegisterPage.jsx";
-import ListPetsPage from "./App/pages/ListPetsPage.jsx";
+import ListPetPage from "./App/pages/ListPetPage.jsx";
+import { AuthProvider } from "./App/context/AuthContext";
+import FormUserPage from "./App/pages/FormUserPage.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,18 +27,18 @@ const App = () => {
       setIsShowSplash(false);
     }, 2000);
   }, []);
-    return(
+  return(
     <>
-        <NavigationContainer>
-          <UserProvider>
-            <Stack.Navigator>
-              {isShowSplash ? (
-                <Stack.Screen
-                  name="Splash"
-                  component={SplashScreen}
-                  options={{ headerShown: false }}
-                />
-              ) : (
+      <NavigationContainer>
+        <AuthProvider>
+          <Stack.Navigator>
+            {isShowSplash ? (
+              <Stack.Screen
+                name="Splash"
+                component={SplashScreen}
+                options={{ headerShown: false }}
+              />
+            ) : (
               <>
                 <Stack.Screen
                   name="FirstPage"
@@ -96,7 +96,7 @@ const App = () => {
                 /> 
                 <Stack.Screen
                   name="Pet"
-                  component={ListPetsPage}
+                  component={ListPetPage}
                   options={{
                     title:'ADOPTS PETS',
                     headerStyle: {
@@ -109,7 +109,7 @@ const App = () => {
                   name="Invitado"
                   component={InvitadoPage}
                   options={{
-                    title:'Invitado',
+                    title:'ADOPTS PETS',
                     headerStyle: {
                       backgroundColor: '#E89551', 
                     },
@@ -129,10 +129,13 @@ const App = () => {
                 /> 
                 <Stack.Screen
                   name="Registro"
-                  component={RegisterPage}
+                  component={FormUserPage}
                   options={{
-                    headerShown: false,
-                    headerBackTitleVisible: false,
+                    title:'Registro',
+                    headerStyle: {
+                      backgroundColor: '#E89551', 
+                    },
+                      headerTintColor: 'white', 
                   }}
                 />
                 <Stack.Screen
@@ -147,10 +150,10 @@ const App = () => {
               </>
             )}
           </Stack.Navigator>
-        </UserProvider>
+        </AuthProvider>
       </NavigationContainer>
     </>
   );
 }
 
-export default App
+export default App;

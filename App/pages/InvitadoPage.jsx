@@ -1,12 +1,182 @@
-import {View, Text} from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    FlatList,
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Image,
+} from 'react-native';
+import axios from 'axios';
+import { IP } from '../api/IP';
 
-const InvitadoPage = () => {
+function InvitadoPage({ navigation }) {
+    const [isLoading, setLoading] = useState(true);
+    const [data, setData] = useState([]);
+
+    const URL = `${IP}/v1/petsactivos`;
+
+    const getPetsAxios = async () => {
+        try {
+            const response = await axios.get(URL);
+            setData(response.data.data);
+        } catch (error) {
+            console.log('Error en el servidor: ', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        getPetsAxios();
+    }, []);
+
+    const handlePressAdoptar = (id) => {
+        navigation.navigate('Pet', { petId: id });
+    };
+
     return (
-        <View>
-            <Text>Hola desde la página de invitado</Text>
+        <View style={styles.container}>
+            {isLoading ? (
+                <ActivityIndicator style={{ marginTop: 20 }} />
+            ) : (
+                <FlatList
+                    data={data}
+                    keyExtractor={item => item.pk_id_mas.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.petCard}>
+                            <View style={styles.petViewImage}>
+                                <Image
+                                    source={{ uri: `${IP}/pets/${item.imagen_pet}` }}
+                                    style={styles.petImage}
+                                />
+                            </View>
+                            <View style={styles.petInfo}>
+                                <View style={styles.petDetailsLeft}>
+                                    <Text style={styles.petName}>{item.nombre_mas}</Text>
+                                    <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
+                                </View>
+                                <View style={styles.petDetailsRight}>
+                                    <Text style={styles.petCategory}>{item.nombre_cate}</Text>
+                                    <Text style={styles.petBreed}>{item.nombre_raza}</Text>
+                                </View>
+                            </View>
+                            <TouchableOpacity style={styles.adoptButton} onPress={() => handlePressAdoptar(item.pk_id_mas)}>
+                                <Text style={styles.adoptButtonText}>Visualizar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                />
+            )}
         </View>
     );
-};
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        paddingHorizontal: 20,
+        paddingTop:15
+    },
+    petCard: {
+        padding: 10,
+        borderRadius: 10,
+        marginHorizontal: 10,
+        marginBottom: 20,
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 8,
+        borderColor: "#000",
+        borderWidth: 0.4
+    },
+    petViewImage: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    petImage: {
+        width: '95%',
+        height: 200,
+        borderRadius: 10,
+        marginTop: 12,
+        borderColor: "#000",
+        borderWidth: 0.4
+    },
+    petInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10,
+        marginHorizontal:20
+    },
+    petDetailsLeft: {
+        flex: 1,
+        paddingRight: 10,
+    },
+    petDetailsRight: {
+        flex: 1,
+        alignItems: 'flex-end',
+        paddingLeft: 10,
+    },
+    petName: {
+        fontSize: 25,
+        fontWeight: 'bold',
+    },
+    petLocation: {
+        fontSize: 15,
+        color: '#666',
+        marginTop: 4,
+    },
+    petCategory: {
+        fontSize: 25,
+        fontWeight: 'bold',
+    },
+    petBreed: {
+        fontSize: 15,
+        marginTop: 4,
+    },
+    adoptButton: {
+        backgroundColor: '#E89551',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        borderRadius: 5,
+        marginTop: 10,
+    },
+    adoptButtonText: {
+        color: '#001528',
+        fontSize: 22,
+        fontWeight: 'bold',
+    },
+    modalImage: {
+        width: '100%',
+        height: 300,
+        borderRadius: 10,
+    },
+    modalText: {
+        fontSize: 16,
+        marginVertical: 5,
+    },
+    infoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginVertical: 8,
+    },
+    smallInfoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
+    smallInfoText: {
+        fontSize: 14,
+        color: '#666',
+        marginLeft: 8,
+    },
+});
 
 export default InvitadoPage;

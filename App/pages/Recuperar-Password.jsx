@@ -6,7 +6,7 @@ import NetInfo from '@react-native-community/netinfo';
 
 import Input from "../components/atoms/inputs/Inputs";
 import LinkBoton from "../components/atoms/button/linkboton";
-import { IP } from "../Api/context/ip";
+import { IP } from "../context/ip";
 
 const ForgotPassword = () => {
   const navigation = useNavigation();

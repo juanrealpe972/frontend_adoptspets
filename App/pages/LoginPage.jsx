@@ -6,6 +6,7 @@ import {
   Alert,
   Modal,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -14,14 +15,14 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import CustomModal from '../components/modal/modal';
-import LinkBoton from '../components/atoms/button/linkboton';
-
-const ip = "http://192.168.1.11:3000";
+import { IP } from '../api/IP';
+import { useAuthContext } from '../context/AuthContext';
 
 const LoginPage = ({visible, onClose}) => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const { setIsAuthenticated } = useAuthContext();
   const [formData, setFormData] = useState({
     correo: '',
     password: '',
@@ -71,17 +72,19 @@ const LoginPage = ({visible, onClose}) => {
     }
 
     try {
-      const baseURL = `${ip}/auth/login`;
+      const baseURL = `${IP}/auth/login`;
       const response = await axios.post(baseURL, formData);
       if (response.status === 200) {
         const {token, user} = response.data;
         if (token && user) {
           await AsyncStorage.setItem('token', token);
           console.log('Token obtenido al iniciar sesión:', token);
-          await AsyncStorage.setItem('usuarios', JSON.stringify(user));
+          await AsyncStorage.setItem('usuario', JSON.stringify(user));
           setLoginSuccess(true);
           setIsLoading(false);
+          setIsAuthenticated(true);
           console.log(token);
+          console.log(JSON.stringify(user));
           navigation.navigate('Visitante');
           Alert.alert('Inicio de sesión exitoso');
         } else {
@@ -113,6 +116,7 @@ const LoginPage = ({visible, onClose}) => {
       }
     }
   };
+
   if (!loginSuccess) {}
   return (
     <View style={{flex: 1}}>
@@ -136,11 +140,14 @@ const LoginPage = ({visible, onClose}) => {
             placeholder="Contraseña"
             secureTextEntry={true}
           />
-          <LinkBoton
-            press={Validacion}
-            text="Iniciar Sesión"
-            styles={styles.boton}
-          />
+          <View style={{display:"flex", alignItems:"center"}}>
+            <TouchableOpacity
+              style={styles.boton}
+              onPress={Validacion}
+              >
+              <Text style={styles.texto}>Iniciar Sesión</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </CustomModal>
       <Modal
@@ -164,8 +171,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.0)',
-    paddingTop: '5%',
-    paddingBottom: '5%',
+  },
+  texto: {
+    color: '#001528',
+    fontSize: 20,
+    fontWeight: '500',
+    textAlign: "center"
   },
   titulo: {
     fontSize: 24,
@@ -181,7 +192,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    marginBottom: 20,
   },
   etiqueta: {
     fontSize: 16,
@@ -206,17 +216,20 @@ const styles = StyleSheet.create({
   },
   activityIndicatorWrapper: {
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    height: 100,
-    width: 100,
     borderRadius: 10,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
   boton: {
-    backgroundColor: '#000',
-    fontSize: 15
-  }
+    width: 200,
+    height: "auto",
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#E89551',
+    borderRadius: 10,
+    paddingVertical: 10
+  },
 });
 
 export default LoginPage;

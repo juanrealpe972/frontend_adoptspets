@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {View, StyleSheet, Alert, Text, Image} from 'react-native';
+import React, { useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { View, StyleSheet, Alert, Text, Image } from 'react-native';
 
+import { useAuthContext } from '../context/AuthContext';
 import LinkBoton from '../components/atoms/button/linkboton';
 import checkConnectivity from '../components/error/errorHandler';
-import {Typography} from '../components/atoms/Typography/textGlobal';
+import { Typography } from '../components/atoms/Typography/textGlobal';
 import LoginPage from './LoginPage';
 
 export default function FirstPage() {
-  const [loginVisible, setLoginVisible] = useState(null);
+  const { setLoginUser, loginUser } = useAuthContext()
   const navigation = useNavigation()
 
   useEffect(() => {
@@ -20,12 +21,6 @@ export default function FirstPage() {
     const unsubscribe = checkConnectivity(onConnected, onDisconnected);
     return () => unsubscribe();
   }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setLoginVisible(false);
-    }, []),
-  );
 
   return (
     <View style={styles.container}>
@@ -41,16 +36,16 @@ export default function FirstPage() {
           Adopts Pets es una aplicación para que puedas adoptar la mascota de tu gusto de manera fácil y rápida.
         </Text>
         <View style={styles.footer}>
-          <LinkBoton press={() => setLoginVisible(true)} text={'Iniciar Sesión'} />
-          {loginVisible && (
+          <LinkBoton press={() => setLoginUser(true)} text={'Iniciar Sesión'} />
+          {loginUser && (
             <LoginPage
               visible={true}
-              onClose={() => setLoginVisible(false)}
+              onClose={() => setLoginUser(false)}
             />
           )}
         </View>
         <View style={styles.footer1}>
-          <LinkBoton press={() => navigation.navigate("Registro")} text={'Registrarse'} />
+          <LinkBoton press={() => navigation.navigate("Registro", { mode: "create" })} text={'Registrarse'} />
         </View>
         <View style={styles.footer2}>
           <LinkBoton press={() => navigation.navigate("Invitado")} text={'Ingresar como invitado'} />
@@ -75,7 +70,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 185,
+    paddingTop: 160,
   },
   customSubtitle: {
     color: 'black',
@@ -88,21 +83,21 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 170,
+    paddingBottom: 200,
   },
   footer1: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 110,
+    paddingBottom: 135,
   },
   footer2: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 22,
+    paddingBottom: 40,
   },
   logo: {
     width: 350,

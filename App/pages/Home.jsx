@@ -9,19 +9,17 @@ import {
   Image,
 } from 'react-native';
 import axios from 'axios';
-
-const ip = "http://192.168.1.11:3000";
+import { IP } from '../api/IP';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Home({ navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [selectedPet, setSelectedPet] = useState(null);
-
-  const URL = `${ip}/v1/petsactivos`;
+  const [userRole, setUserRole] = useState('');
 
   const getPetsAxios = async () => {
     try {
-      const response = await axios.get(URL);
+      const response = await axios.get(`${IP}/v1/petsactivos`);
       setData(response.data.data);
     } catch (error) {
       console.log('Error en el servidor: ', error);
@@ -34,8 +32,36 @@ function Home({ navigation }) {
     getPetsAxios();
   }, []);
 
-  const handlePressAdoptar = () => {
-    navigation.navigate('Pet', { pet: selectedPet });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('usuario');
+        if (jsonValue !== null) {
+          const userData = JSON.parse(jsonValue);
+          setUserRole(userData.rol_user)
+        } else {
+          console.log('No se encontraron datos de usuario en AsyncStorage');
+        }
+      } catch (e) {
+        console.error("Error fetching user data:", e);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  const handlePressAdoptar = (id) => {
+    navigation.navigate('Pet', { petId: id });
+  };
+
+  const renderRegisterPetsButton = () => {
+    if (userRole === "admin") {
+      return (
+        <TouchableOpacity style={styles.registerPetsButton} onPress={() => navigation.navigate('RegistrarMascotas')}>
+          <Text style={styles.registerPetsButtonText}>Registrar Mascotas</Text>
+        </TouchableOpacity>
+      );
+    }
+    return null;
   };
 
   return (
@@ -43,27 +69,36 @@ function Home({ navigation }) {
       {isLoading ? (
         <ActivityIndicator style={{ marginTop: 20 }} />
       ) : (
-        <FlatList
-          data={data}
-          keyExtractor={item => item.pk_id_mas.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity>
+        <>
+          {renderRegisterPetsButton()}
+          <FlatList
+            data={data}
+            keyExtractor={item => item.pk_id_mas.toString()}
+            renderItem={({ item }) => (
               <View style={styles.petCard}>
-                <Image
-                  source={{ uri: `${ip}/pets/${item.imagen_pet}` }}
-                  style={styles.petImage}
-                />
-                <Text style={styles.petName}>{item.nombre_mas}</Text>
-                <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
-                <Text style={styles.petCategory}>{item.nombre_cate}</Text>
-                <Text style={styles.petBreed}>{item.nombre_raza}</Text>
-                <TouchableOpacity style={styles.adoptButton} onPress={() => handlePressAdoptar()}>
+                <View style={styles.petViewImage}>
+                  <Image
+                    source={{ uri: `${IP}/pets/${item.imagen_pet}` }}
+                    style={styles.petImage}
+                  />
+                </View>
+                <View style={styles.petInfo}>
+                  <View style={styles.petDetailsLeft}>
+                    <Text style={styles.petName}>{item.nombre_mas}</Text>
+                    <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
+                  </View>
+                  <View style={styles.petDetailsRight}>
+                    <Text style={styles.petCategory}>{item.nombre_cate}</Text>
+                    <Text style={styles.petBreed}>{item.nombre_raza}</Text>
+                  </View>
+                </View>
+                <TouchableOpacity style={styles.adoptButton} onPress={() => handlePressAdoptar(item.pk_id_mas)}>
                   <Text style={styles.adoptButtonText}>Visualizar</Text>
                 </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-          )}
-        />
+            )}
+          />
+        </>
       )}
     </View>
   );
@@ -74,7 +109,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 20,
-    paddingTop: 22,
+    paddingVertical: 15
   },
   petCard: {
     padding: 10,
@@ -87,30 +122,56 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 8,
+    borderColor: "#000",
+    borderWidth: 0.4
+  },
+  petViewImage: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
   petImage: {
-    width: '100%',
+    width: '95%',
     height: 200,
     borderRadius: 10,
+    marginTop: 12,
+    borderColor: "#000",
+    borderWidth: 0.4
+  },
+  petInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    marginHorizontal:20
+  },
+  petDetailsLeft: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  petDetailsRight: {
+    flex: 1,
+    alignItems: 'flex-end',
+    paddingLeft: 10,
   },
   petName: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: 'bold',
-    marginTop: 10,
   },
   petLocation: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#666',
+    marginTop: 4,
   },
   petCategory: {
-    fontSize: 16,
+    fontSize: 25,
     fontWeight: 'bold',
   },
   petBreed: {
-    fontSize: 16,
+    fontSize: 15,
+    marginTop: 4,
   },
   adoptButton: {
-    backgroundColor: '#06AEF4',
+    backgroundColor: '#E89551',
     paddingVertical: 10,
     paddingHorizontal: 20,
     alignItems: 'center',
@@ -118,34 +179,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   adoptButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#001528',
+    fontSize: 22,
     fontWeight: 'bold',
   },
-  modalImage: {
-    width: '100%',
-    height: 300,
-    borderRadius: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    marginVertical: 5,
-  },
-  infoContainer: {
-    flexDirection: 'row',
+  registerPetsButton: {
+    backgroundColor: '#001528',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 8,
+    borderRadius: 5,
   },
-  smallInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  smallInfoText: {
-    fontSize: 14,
-    color: '#666',
-    marginLeft: 8,
+  registerPetsButtonText: {
+    color: 'white',
+    fontSize: 22,
+    fontWeight: 'bold',
   },
 });
 
