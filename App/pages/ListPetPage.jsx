@@ -6,21 +6,27 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthContext } from '../context/AuthContext';
 import LinkBoton from '../components/atoms/button/linkboton';
 import AdoptFinally from './AdoptFinally';
+import { useRoute } from '@react-navigation/native';
 
-function ListPetPage({ route }) {
-    const { petId } = route.params;
+function ListPetPage() {
+    const route = useRoute();
+    const { params } = route;
     const [isLoading, setLoading] = useState(true);
-    const [pet, setPet] = useState(null);
+    const [pet, setPet] = useState([]);
     const [userAuth, setUserAuth] = useState({});
     const { isAuthenticated } = useAuthContext();
     const [adoptVisible, setAdoptVisible] = useState(false);
 
     const getPetDetails = async () => {
         try {
-            const response = await axios.get(`${IP}/v1/petsone/${petId}`);
-            setPet(response.data.data[0]);
+            const response = await axios.get(`${IP}/v1/petsone/${params.pk_id_mas}`);
+            if (response.data.data) {
+                setPet(response.data.data);
+            } else {
+                console.log('Error al obtener los detalles de la mascota:', response.data.message);
+            }
         } catch (error) {
-            console.log('Error en el servidor: ', error);
+            console.log('Error en la solicitud:', error);
         } finally {
             setLoading(false);
         }
@@ -30,16 +36,16 @@ function ListPetPage({ route }) {
         const getUser = async () => {
             const jsonValue = await AsyncStorage.getItem('usuario');
             const userData = JSON.parse(jsonValue);
-            if(userData) {
+            if (userData) {
                 setUserAuth(userData);
             }
-        }
+        };
         getUser();
         getPetDetails();
     }, []);
 
     const renderUpdateButton = () => {
-        if (isAuthenticated && userAuth !== "admin") {
+        if (isAuthenticated && userAuth.rol_user !== "admin") {
             return (
                 <LinkBoton press={() => setAdoptVisible(true)} text={'Adoptar Mascota'} />
             );
@@ -52,19 +58,19 @@ function ListPetPage({ route }) {
             {isLoading ? (
                 <ActivityIndicator style={{ marginTop: 20 }} />
             ) : (
-                pet && (
+                pet ? (
                     <View style={styles.petDetails}>
                         <Image
                             source={{ uri: `${IP}/pets/${pet.imagen_pet}` }}
                             style={styles.petImage}
-                            onError={() => console.log('Error loading image')}
+                            onError={() => console.log('Error cargando la imagen')}
                         />
                         <View>
                             <Text style={styles.petName}>{pet.nombre_mas}</Text>
                             <View style={styles.infoSection}>
                                 <Text style={styles.infoTitle}>Datos básicos:</Text>
                                 <Text style={styles.infoText}>Edad: {pet.edad_mas} meses</Text>
-                                <Text style={styles.infoText}>Tamaño: {pet.tamano_mas}cm</Text>
+                                <Text style={styles.infoText}>Tamaño: {pet.tamano_mas} cm</Text>
                                 <Text style={styles.infoText}>Peso: {pet.peso_mas} kilos</Text>
                                 <Text style={styles.infoText}>Raza: {pet.nombre_raza}</Text>
                                 <Text style={styles.infoText}>Descripción: {pet.descripcion_mas}</Text>
@@ -99,6 +105,8 @@ function ListPetPage({ route }) {
                             )}
                         </View>
                     </View>
+                ) : (
+                    <Text style={styles.infoText}>No se encontraron detalles de la mascota.</Text>
                 )
             )}
         </ScrollView>
@@ -124,7 +132,7 @@ const styles = StyleSheet.create({
         fontSize: 35,
         fontWeight: 'bold',
         marginTop: 10,
-        textAlign:"center"
+        textAlign: "center",
     },
     infoSection: {
         width: '100%',

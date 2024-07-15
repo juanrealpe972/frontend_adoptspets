@@ -96,11 +96,11 @@ const SideBar = ({ visible, onClose }) => {
               </TouchableOpacity>
               {userAuth.rol_user === 'admin' && (
                 <TouchableOpacity
-                  style={buttonStyle('MascotasPorAdoptar')}
-                  onPress={() => handlePress('MascotasPorAdoptar')}
+                  style={buttonStyle('PetsAdopt')}
+                  onPress={() => handlePress('PetsAdopt')}
                 >
                   <Image source={iconNoti} style={styles.buttonIcon} />
-                  <Text style={textStyle('MascotasPorAdoptar')}>Mascotas por adoptar</Text>
+                  <Text style={textStyle('PetsAdopt')}>Mascotas por adoptar</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity

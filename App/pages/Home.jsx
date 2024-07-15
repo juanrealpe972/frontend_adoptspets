@@ -56,7 +56,7 @@ function Home({ navigation }) {
   const renderRegisterPetsButton = () => {
     if (userRole === "admin") {
       return (
-        <TouchableOpacity style={styles.registerPetsButton} onPress={() => navigation.navigate('RegistrarMascotas')}>
+        <TouchableOpacity style={styles.registerPetsButton} onPress={() => navigation.navigate('FormMascota')}>
           <Text style={styles.registerPetsButtonText}>Registrar Mascotas</Text>
         </TouchableOpacity>
       );

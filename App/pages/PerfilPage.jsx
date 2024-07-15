@@ -5,13 +5,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { IP } from "../api/IP";
 import { useAuthContext } from "../context/AuthContext";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const PerfilPage = () => {
   const [userData, setUserData] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const { setIdUser } = useAuthContext();
   const navigation = useNavigation();
+  const route = useRoute();
+  const { params } = route;
 
   const ahoraIniciar = (data) => {
     setIdUser(data);
@@ -21,23 +23,31 @@ const PerfilPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const jsonValue = await AsyncStorage.getItem('usuario');
-        if (jsonValue !== null) {
-          const userData = JSON.parse(jsonValue);
-          const response = await axios.get(`${IP}/v1/user/${userData.pk_id_user}`);
-          if (response.data && response.data.data.length > 0) {
-            setUserData(response.data.data[0]);
-          }
-          setCurrentUser(userData); 
+        let userId;
+        if (params && params.userId) {
+          userId = params.userId;
         } else {
-          console.log('No se encontraron datos de usuario en AsyncStorage');
+          const jsonValue = await AsyncStorage.getItem('usuario');
+          if (jsonValue !== null) {
+            const res = JSON.parse(jsonValue);
+            userId = res.pk_id_user;
+            setCurrentUser(res);
+          } else {
+            console.log('No se encontraron datos de usuario en AsyncStorage');
+            return;
+          }
+        }
+
+        const response = await axios.get(`${IP}/v1/user/${userId}`);
+        if (response.data && response.data.data.length > 0) {
+          setUserData(response.data.data[0]);
         }
       } catch (e) {
         console.error("Error fetching user data:", e);
       }
     };
     fetchUserData();
-  }, []);
+  }, [params]);
 
   const renderUpdateButton = () => {
     if (userData.pk_id_user === currentUser.pk_id_user) {

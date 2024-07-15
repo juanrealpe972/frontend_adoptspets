@@ -6,7 +6,6 @@ import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
 
-import iconNoti from "../resources/notificacionesIcono.png"
 import iconSub from '../resources/logo_adoptpets.jpg';
 import SideBar from "./SideBar";
 import PerfilPage from "../pages/PerfilPage";
