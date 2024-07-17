@@ -19,6 +19,7 @@ import FormUserPage from "./App/pages/FormUserPage.jsx";
 import FormPet from "./App/pages/FormPet.jsx";
 import PetsAdopt from "./App/pages/PetsAdopt.jsx";
 import PerfilPage from "./App/pages/PerfilPage.jsx";
+import ListPetPageDue from "./App/pages/ListPetPageDue.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -102,6 +103,17 @@ const App = () => {
                   component={ListPetPage}
                   options={{
                     title:'ADOPTS PETS',
+                    headerStyle: {
+                      backgroundColor: '#E89551', 
+                    },
+                      headerTintColor: 'white', 
+                  }}
+                /> 
+                <Stack.Screen
+                  name="PetDue"
+                  component={ListPetPageDue}
+                  options={{
+                    title:'Mascota por adoptar',
                     headerStyle: {
                       backgroundColor: '#E89551', 
                     },

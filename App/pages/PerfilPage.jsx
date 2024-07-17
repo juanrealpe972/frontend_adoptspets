@@ -13,7 +13,7 @@ const PerfilPage = () => {
   const { setIdUser } = useAuthContext();
   const navigation = useNavigation();
   const route = useRoute();
-  const { params } = route;
+  const { idUser } = route.params;
 
   const ahoraIniciar = (data) => {
     setIdUser(data);
@@ -24,8 +24,8 @@ const PerfilPage = () => {
     const fetchUserData = async () => {
       try {
         let userId;
-        if (params && params.userId) {
-          userId = params.userId;
+        if (idUser && idUser.userId) {
+          userId = idUser.userId;
         } else {
           const jsonValue = await AsyncStorage.getItem('usuario');
           if (jsonValue !== null) {

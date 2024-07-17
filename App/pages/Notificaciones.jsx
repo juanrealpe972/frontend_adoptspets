@@ -14,8 +14,6 @@ const Notificaciones = () => {
     const fetchNotifications = async () => {
       try {
         const url = `${ip}/v1/notificaciones`;
-
-        //aqui obtengo el token de asyncstorage y lo verifico a ver si es valido 
         const token = await AsyncStorage.getItem('token');
         if (!token) {
           Alert.alert('Error', 'No se encontró el token de autenticación');
@@ -26,9 +24,7 @@ const Notificaciones = () => {
         }
 
         const response = await axios.get(url, { headers: { token: token } });
-
         if (response.status === 200) {
-    
           setNotifications(response.data.data); 
         } else {
           Alert.alert('Error', 'Error al obtener las notificaciones');
@@ -54,7 +50,6 @@ const Notificaciones = () => {
 
   return (
     <View style={styles.container}>
-     
       {isLoading ? (
         <ActivityIndicator />
       ) : (

@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import axiosClient from '../api/axios';
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthContext } from '../context/AuthContext';
-import LinkBoton from '../components/atoms/button/linkboton';
 import AdoptFinally from './AdoptFinally';
 import { IP } from '../api/IP';
 
-function ListPetPage() {
+function ListPetPageDue() {
     const route = useRoute();
-    const { petId } = route.params;
+    const { petIdWithDue } = route.params;
     const [isLoading, setLoading] = useState(true);
     const [pet, setPet] = useState(null);
     const [userAuth, setUserAuth] = useState({});
@@ -19,8 +18,8 @@ function ListPetPage() {
 
     const getPetDetails = async () => {
         try {
-            console.log("Fetching pet details for ID:", petId);
-            const response = await axiosClient.get(`${IP}/v1/petsone/${petId}`);
+            console.log("Fetching pet details for ID:", petIdWithDue);
+            const response = await axiosClient.get(`${IP}/v1/petsone-due/${petIdWithDue}`);
             if (response.data && response.data.data) {
                 setPet(response.data.data[0]);
             } else {
@@ -53,13 +52,28 @@ function ListPetPage() {
         getPetDetails();
     }, []);
 
-    const renderUpdateButton = () => {
-        if (isAuthenticated && userAuth.rol_user !== "admin") {
-            return (
-                <LinkBoton press={() => setAdoptVisible(true)} text={'Adoptar Mascota'} />
-            );
+    const handleCancelAdoption = async () => {
+        try {
+            console.log('Cancelar adopción');
+        } catch (error) {
+            console.error('Error al cancelar la adopción:', error);
         }
-        return null;
+    };
+
+    const perfilDeUsuario = async (id) => {
+        try {
+            navigation.navigate('Perfil', { idUser : id})
+        } catch (error) {
+            console.error('Perfil de usuario:', error);
+        }
+    };
+
+    const handleGiveForAdoption = async () => {
+        try {
+            console.log('Dar en adopción la mascota');
+        } catch (error) {
+            console.error('Error al dar en adopción la mascota:', error);
+        }
     };
 
     return (
@@ -104,7 +118,20 @@ function ListPetPage() {
                                 <Text style={styles.infoText}>Lugar de rescate: {pet.lugar_rescate_mas}</Text>
                                 <Text style={styles.infoText}>Condiciones en las que fue encontrado: {pet.condiciones_estado_mas}</Text>
                                 <Text style={styles.infoText}>Tiempo en el refugio o con el cuidador: {pet.tiempo_en_refugio_mas} meses</Text>
-                                {renderUpdateButton()}
+                            </View>
+                            <View style={styles.contactSection}>
+                                <Text style={styles.infoTitle}>Datos de contacto que desea adoptar la mascota:</Text>
+                                <Text style={styles.infoText}>Nombre: {pet.nombre_user}</Text>
+                                <Text style={styles.infoText}>Gmail: {pet.email_user}</Text>
+                                <TouchableOpacity style={styles.button} onPress={perfilDeUsuario(pet.pk_id_user)}>
+                                    <Text style={styles.buttonText}>Perfil de usuario</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.button} onPress={handleCancelAdoption}>
+                                    <Text style={styles.buttonText}>Cancelar adopción</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.button} onPress={handleGiveForAdoption}>
+                                    <Text style={styles.buttonText}>Dar en adopción la mascota</Text>
+                                </TouchableOpacity>
                             </View>
                             {adoptVisible && (
                                 <AdoptFinally
@@ -155,19 +182,25 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginTop: 5,
     },
-    updateButton: {
+    contactSection: {
+        width: '100%',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    button: {
         width: 180,
-        height: 36,
+        height: 60,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#06AEF4",
+        backgroundColor: "#001528",
         borderRadius: 10,
-        marginVertical: 2,
+        marginVertical: 10,
     },
-    updateButtonText: {
-        fontSize: 16,
+    buttonText: {
+        fontSize: 18,
         color: "white",
+        textAlign:"center"
     },
 });
 
-export default ListPetPage;
+export default ListPetPageDue;
