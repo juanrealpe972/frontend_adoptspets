@@ -10,6 +10,7 @@ import iconSub from '../resources/logo_adoptpets.jpg';
 import SideBar from "./SideBar";
 import PerfilPage from "../pages/PerfilPage";
 import Home from "../pages/Home";
+import MiProfile from "../pages/MiProfile";
 
 const Tab = createBottomTabNavigator();
 
@@ -69,7 +70,7 @@ const TabNavigationVen = () => {
         />
         <Tab.Screen
           name="Perfil"
-          component={PerfilPage}
+          component={MiProfile}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Ionicons name='person-circle-sharp' size={34} color={color} />

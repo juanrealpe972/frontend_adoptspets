@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import axiosClient from '../api/axios';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useAuthContext } from '../context/AuthContext';
 import AdoptFinally from './AdoptFinally';
 import { IP } from '../api/IP';
 
 function ListPetPageDue() {
+    const navigation = useNavigation();
     const route = useRoute();
     const { petIdWithDue } = route.params;
     const [isLoading, setLoading] = useState(true);
     const [pet, setPet] = useState(null);
     const [userAuth, setUserAuth] = useState({});
-    const { isAuthenticated } = useAuthContext();
     const [adoptVisible, setAdoptVisible] = useState(false);
 
     const getPetDetails = async () => {
         try {
-            console.log("Fetching pet details for ID:", petIdWithDue);
             const response = await axiosClient.get(`${IP}/v1/petsone-due/${petIdWithDue}`);
             if (response.data && response.data.data) {
                 setPet(response.data.data[0]);
@@ -53,26 +51,54 @@ function ListPetPageDue() {
     }, []);
 
     const handleCancelAdoption = async () => {
+        if (!pet) {
+            Alert.alert('Error', 'Detalles de la mascota no disponibles.');
+            return;
+        }
+        setLoading(true);
         try {
-            console.log('Cancelar adopción');
+            const response = await axiosClient.put(`${IP}/v1/petsac/${pet.pk_id_mas}`);
+            if (response.status === 200) {
+                Alert.alert('Éxito', 'La adopción ha sido cancelada. La mascota está disponible nuevamente.');
+                navigation.navigate('PetDue');
+            } else {
+                Alert.alert('Error', response.data.message);
+            }
         } catch (error) {
             console.error('Error al cancelar la adopción:', error);
+            Alert.alert('Error', 'Hubo un problema al intentar cancelar la adopción.');
+        } finally {
+            setLoading(false);
         }
     };
+    
+    const handleGiveForAdoption = async () => {
+        if (!pet) {
+            Alert.alert('Error', 'Detalles de la mascota no disponibles.');
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await axiosClient.put(`${IP}/v1/petsdes/${pet.pk_id_mas}`);
+            if (response.status === 200) {
+                Alert.alert('Éxito', 'La mascota se ha dado en adopción exitosamente.');
+                navigation.navigate('PetDue');
+            } else {
+                Alert.alert('Error', response.data.message);
+            }
+        } catch (error) {
+            console.error('Error al dar en adopción la mascota:', error);
+            Alert.alert('Error', 'Hubo un problema al intentar dar en adopción la mascota.');
+        } finally {
+            setLoading(false);
+        }
+    };    
 
     const perfilDeUsuario = async (id) => {
         try {
-            navigation.navigate('Perfil', { idUser : id})
+            navigation.navigate('Perfil', { idUser: id });
         } catch (error) {
             console.error('Perfil de usuario:', error);
-        }
-    };
-
-    const handleGiveForAdoption = async () => {
-        try {
-            console.log('Dar en adopción la mascota');
-        } catch (error) {
-            console.error('Error al dar en adopción la mascota:', error);
         }
     };
 
@@ -123,7 +149,7 @@ function ListPetPageDue() {
                                 <Text style={styles.infoTitle}>Datos de contacto que desea adoptar la mascota:</Text>
                                 <Text style={styles.infoText}>Nombre: {pet.nombre_user}</Text>
                                 <Text style={styles.infoText}>Gmail: {pet.email_user}</Text>
-                                <TouchableOpacity style={styles.button} onPress={perfilDeUsuario(pet.pk_id_user)}>
+                                <TouchableOpacity style={styles.button} onPress={() => perfilDeUsuario(pet.pk_id_user)}>
                                     <Text style={styles.buttonText}>Perfil de usuario</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.button} onPress={handleCancelAdoption}>

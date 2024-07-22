@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Picker, Image } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const FormPet = () => {
     const [form, setForm] = useState({
@@ -8,26 +9,43 @@ const FormPet = () => {
         tamano_mas: '',
         peso_mas: '',
         descripcion_mas: '',
-        vacunacion_mas: '',
-        esterilizacion_castracion_mas: '',
-        enfermedades_mas: '',
-        tratamientos_mas: '',
+        vacunacion_mas: 'No',
+        esterilizacion_castracion_mas: 'No',
+        enfermedades_mas: 'No',
+        tratamientos_mas: 'No',
         energia_mas: '',
-        compatibilidad_mas: '',
+        compatibilidad_mas: 'No',
         habitos_mas: '',
         necesidades_mas: '',
         lugar_rescate_mas: '',
-        condiciones_estado_mas: '',
+        condiciones_estado_mas: 'Regular',
         tiempo_en_refugio_mas: '',
-        genero_mas: '',
-        estado_mas: '',
+        genero_mas: 'Macho',
+        estado_mas: 'activo',
         fk_raza_mas: '',
         imagen_pet: '',
-        fk_adoptante: ''
     });
 
     const handleInputChange = (name, value) => {
         setForm({ ...form, [name]: value });
+    };
+
+    const handleImagePicker = () => {
+        const options = {
+            mediaType: 'photo',
+            quality: 1,
+        };
+
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+                console.log('ImagePicker Error: ', response.errorMessage);
+            } else {
+                const source = { uri: response.assets[0].uri };
+                setForm({ ...form, imagen_pet: source.uri });
+            }
+        });
     };
 
     const handleSubmit = () => {
@@ -72,41 +90,57 @@ const FormPet = () => {
                     onChangeText={(text) => handleInputChange('descripcion_mas', text)}
                 />
                 <Text style={styles.label}>Vacunación</Text>
-                <TextInput
+                <Picker
+                    selectedValue={form.vacunacion_mas}
                     style={styles.input}
-                    value={form.vacunacion_mas}
-                    onChangeText={(text) => handleInputChange('vacunacion_mas', text)}
-                />
+                    onValueChange={(itemValue) => handleInputChange('vacunacion_mas', itemValue)}
+                >
+                    <Picker.Item label="Si" value="Si" />
+                    <Picker.Item label="No" value="No" />
+                </Picker>
                 <Text style={styles.label}>Esterilización/Castración</Text>
-                <TextInput
+                <Picker
+                    selectedValue={form.esterilizacion_castracion_mas}
                     style={styles.input}
-                    value={form.esterilizacion_castracion_mas}
-                    onChangeText={(text) => handleInputChange('esterilizacion_castracion_mas', text)}
-                />
+                    onValueChange={(itemValue) => handleInputChange('esterilizacion_castracion_mas', itemValue)}
+                >
+                    <Picker.Item label="Si" value="Si" />
+                    <Picker.Item label="No" value="No" />
+                </Picker>
                 <Text style={styles.label}>Enfermedades</Text>
-                <TextInput
+                <Picker
+                    selectedValue={form.enfermedades_mas}
                     style={styles.input}
-                    value={form.enfermedades_mas}
-                    onChangeText={(text) => handleInputChange('enfermedades_mas', text)}
-                />
+                    onValueChange={(itemValue) => handleInputChange('enfermedades_mas', itemValue)}
+                >
+                    <Picker.Item label="Si" value="Si" />
+                    <Picker.Item label="No" value="No" />
+                </Picker>
                 <Text style={styles.label}>Tratamientos</Text>
-                <TextInput
+                <Picker
+                    selectedValue={form.tratamientos_mas}
                     style={styles.input}
-                    value={form.tratamientos_mas}
-                    onChangeText={(text) => handleInputChange('tratamientos_mas', text)}
-                />
+                    onValueChange={(itemValue) => handleInputChange('tratamientos_mas', itemValue)}
+                >
+                    <Picker.Item label="Si" value="Si" />
+                    <Picker.Item label="No" value="No" />
+                </Picker>
                 <Text style={styles.label}>Energía</Text>
                 <TextInput
                     style={styles.input}
                     value={form.energia_mas}
                     onChangeText={(text) => handleInputChange('energia_mas', text)}
+                    keyboardType="numeric"
                 />
                 <Text style={styles.label}>Compatibilidad</Text>
-                <TextInput
+                <Picker
+                    selectedValue={form.compatibilidad_mas}
                     style={styles.input}
-                    value={form.compatibilidad_mas}
-                    onChangeText={(text) => handleInputChange('compatibilidad_mas', text)}
-                />
+                    onValueChange={(itemValue) => handleInputChange('compatibilidad_mas', itemValue)}
+                >
+                    <Picker.Item label="Si" value="Si" />
+                    <Picker.Item label="No" value="No" />
+                </Picker>
                 <Text style={styles.label}>Hábitos</Text>
                 <TextInput
                     style={styles.input}
@@ -126,11 +160,16 @@ const FormPet = () => {
                     onChangeText={(text) => handleInputChange('lugar_rescate_mas', text)}
                 />
                 <Text style={styles.label}>Condiciones de Estado</Text>
-                <TextInput
+                <Picker
+                    selectedValue={form.condiciones_estado_mas}
                     style={styles.input}
-                    value={form.condiciones_estado_mas}
-                    onChangeText={(text) => handleInputChange('condiciones_estado_mas', text)}
-                />
+                    onValueChange={(itemValue) => handleInputChange('condiciones_estado_mas', itemValue)}
+                >
+                    <Picker.Item label="Mal" value="Mal" />
+                    <Picker.Item label="Regular" value="Regular" />
+                    <Picker.Item label="Bien" value="Bien" />
+                    <Picker.Item label="Muy Bien" value="Muy Bien" />
+                </Picker>
                 <Text style={styles.label}>Tiempo en Refugio</Text>
                 <TextInput
                     style={styles.input}
@@ -139,17 +178,24 @@ const FormPet = () => {
                     keyboardType="numeric"
                 />
                 <Text style={styles.label}>Género</Text>
-                <TextInput
+                <Picker
+                    selectedValue={form.genero_mas}
                     style={styles.input}
-                    value={form.genero_mas}
-                    onChangeText={(text) => handleInputChange('genero_mas', text)}
-                />
+                    onValueChange={(itemValue) => handleInputChange('genero_mas', itemValue)}
+                >
+                    <Picker.Item label="Macho" value="Macho" />
+                    <Picker.Item label="Hembra" value="Hembra" />
+                </Picker>
                 <Text style={styles.label}>Estado</Text>
-                <TextInput
+                <Picker
+                    selectedValue={form.estado_mas}
                     style={styles.input}
-                    value={form.estado_mas}
-                    onChangeText={(text) => handleInputChange('estado_mas', text)}
-                />
+                    onValueChange={(itemValue) => handleInputChange('estado_mas', itemValue)}
+                >
+                    <Picker.Item label="activo" value="activo" />
+                    <Picker.Item label="inactivo" value="inactivo" />
+                    <Picker.Item label="espera" value="espera" />
+                </Picker>
                 <Text style={styles.label}>Raza</Text>
                 <TextInput
                     style={styles.input}
@@ -157,17 +203,8 @@ const FormPet = () => {
                     onChangeText={(text) => handleInputChange('fk_raza_mas', text)}
                 />
                 <Text style={styles.label}>Imagen</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.imagen_pet}
-                    onChangeText={(text) => handleInputChange('imagen_pet', text)}
-                />
-                <Text style={styles.label}>Adoptante</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.fk_adoptante}
-                    onChangeText={(text) => handleInputChange('fk_adoptante', text)}
-                />
+                <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
+                {form.imagen_pet ? <Image source={{ uri: form.imagen_pet }} style={styles.image} /> : null}
                 <Button title="Registrar Mascota" onPress={handleSubmit} />
             </View>
         </ScrollView>
@@ -189,7 +226,12 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         paddingLeft: 10,
         borderRadius: 5
-    }
+    },
+    image: {
+        width: 100,
+        height: 100,
+        marginBottom: 15
+}
 });
 
 export default FormPet;

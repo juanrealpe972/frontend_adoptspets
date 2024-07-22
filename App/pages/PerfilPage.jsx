@@ -5,14 +5,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { IP } from "../api/IP";
 import { useAuthContext } from "../context/AuthContext";
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
-const PerfilPage = () => {
+const PerfilPage = ({ route }) => {
   const [userData, setUserData] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const { setIdUser } = useAuthContext();
   const navigation = useNavigation();
-  const route = useRoute();
   const { idUser } = route.params;
 
   const ahoraIniciar = (data) => {
@@ -47,7 +46,7 @@ const PerfilPage = () => {
       }
     };
     fetchUserData();
-  }, [params]);
+  }, []);
 
   const renderUpdateButton = () => {
     if (userData.pk_id_user === currentUser.pk_id_user) {

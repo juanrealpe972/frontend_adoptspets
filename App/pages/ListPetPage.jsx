@@ -110,6 +110,7 @@ function ListPetPage() {
                                 <AdoptFinally
                                     visible={true}
                                     onClose={() => setAdoptVisible(false)}
+                                    IdPet={pet}
                                 />
                             )}
                         </View>
