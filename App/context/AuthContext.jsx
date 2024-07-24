@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState } from 'react';
 import { createUserApi, getDepartamentos, getMunicipiosForDepar, getPetsEsperaApi, getUserApi, updateUserApi } from '../api/auth.api';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { IP } from '../api/IP';
 
 const AuthContext = createContext();
 
@@ -42,7 +44,7 @@ export const AuthProvider = ({children}) => {
 
   const getDeparts = async () => {
     try {
-      const response = await getDepartamentos()
+      const response = await axios.get(`http://192.168.1.7:3000/v1/departamentos`)
       setDepartamentos(response.data.data)
     } catch (error) {
       console.log('error en el controlador', error);

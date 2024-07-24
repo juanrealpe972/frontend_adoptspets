@@ -40,7 +40,7 @@ function InvitadoPage({ navigation }) {
         <View style={styles.container}>
             {isLoading ? (
                 <ActivityIndicator style={{ marginTop: 20 }} />
-            ) : (
+            ) : data.length > 0 ? (
                 <FlatList
                     data={data}
                     keyExtractor={item => item.pk_id_mas.toString()}
@@ -68,6 +68,8 @@ function InvitadoPage({ navigation }) {
                         </View>
                     )}
                 />
+            ) : (
+                <Text style={styles.noPetsText}>No hay mascotas por adoptar</Text>
             )}
         </View>
     );
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingHorizontal: 20,
-        paddingTop:15
+        paddingTop: 15,
     },
     petCard: {
         padding: 10,
@@ -91,27 +93,27 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 8,
-        borderColor: "#000",
-        borderWidth: 0.4
+        borderColor: '#000',
+        borderWidth: 0.4,
     },
     petViewImage: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     petImage: {
         width: '95%',
         height: 200,
         borderRadius: 10,
         marginTop: 12,
-        borderColor: "#000",
-        borderWidth: 0.4
+        borderColor: '#000',
+        borderWidth: 0.4,
     },
     petInfo: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 10,
-        marginHorizontal:20
+        marginHorizontal: 20,
     },
     petDetailsLeft: {
         flex: 1,
@@ -152,30 +154,11 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: 'bold',
     },
-    modalImage: {
-        width: '100%',
-        height: 300,
-        borderRadius: 10,
-    },
-    modalText: {
-        fontSize: 16,
-        marginVertical: 5,
-    },
-    infoContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginVertical: 8,
-    },
-    smallInfoContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-    smallInfoText: {
-        fontSize: 14,
+    noPetsText: {
+        fontSize: 20,
         color: '#666',
-        marginLeft: 8,
+        textAlign: 'center',
+        marginTop: 20,
     },
 });
 

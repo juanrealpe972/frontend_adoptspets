@@ -5,10 +5,9 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import LinkBoton from '../components/atoms/button/linkboton';
 import { useAuthContext } from '../context/AuthContext';
 import axiosClient from '../api/axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FormUserPage = () => {
-    const { createUser, updateUser, getDeparts, departamentos, municipios, getMunis, setLoginUser, idUser } = useAuthContext()
+    const { getDeparts, departamentos, municipios, getMunis, setLoginUser, idUser } = useAuthContext()
     const navigation = useNavigation()
     const route = useRoute();
     const { mode } = route.params;

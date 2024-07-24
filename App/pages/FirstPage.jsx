@@ -45,7 +45,7 @@ export default function FirstPage() {
           )}
         </View>
         <View style={styles.footer1}>
-          <LinkBoton press={() => navigation.navigate("Registro", { mode: "create" })} text={'Registrarse'} />
+          <LinkBoton press={() => navigation.navigate("Registro", { mode: "create" })} text={'Registrarme'} />
         </View>
         <View style={styles.footer2}>
           <LinkBoton press={() => navigation.navigate("Invitado")} text={'Ingresar como invitado'} />
@@ -63,18 +63,18 @@ const styles = StyleSheet.create({
   title: {
     color: 'black',
     textAlign: 'center',
-    fontSize: 65,
+    fontSize: 55,
     paddingHorizontal: 20,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 160,
+    paddingTop: 120,
   },
   customSubtitle: {
     color: 'black',
-    marginBottom: '90%',
+    marginBottom: '85%',
     textAlign: 'center',
     paddingHorizontal: 20,
   },
@@ -83,25 +83,24 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 200,
+    paddingBottom: 180,
   },
   footer1: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 135,
+    paddingBottom: 120,
   },
   footer2: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 40,
+    paddingBottom: 30,
   },
   logo: {
-    width: 350,
-    height: 350,
-    marginBottom: 5,
+    width: 300,
+    height: 300,
   },
 });

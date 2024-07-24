@@ -1,237 +1,265 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Picker, Image } from 'react-native';
+import { Text, TextInput, Button, StyleSheet, ScrollView, Alert } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
+import axiosClient from '../api/axios';
+import { IP } from '../api/IP';
 import { launchImageLibrary } from 'react-native-image-picker';
 
-const FormPet = () => {
-    const [form, setForm] = useState({
+const RegisterPetForm = () => {
+    const [petData, setPetData] = useState({
         nombre_mas: '',
         edad_mas: '',
         tamano_mas: '',
         peso_mas: '',
         descripcion_mas: '',
-        vacunacion_mas: 'No',
-        esterilizacion_castracion_mas: 'No',
-        enfermedades_mas: 'No',
-        tratamientos_mas: 'No',
+        vacunacion_mas: '',
+        esterilizacion_castracion_mas: '',
+        enfermedades_mas: '',
+        tratamientos_mas: '',
         energia_mas: '',
-        compatibilidad_mas: 'No',
+        compatibilidad_mas: '',
         habitos_mas: '',
         necesidades_mas: '',
         lugar_rescate_mas: '',
-        condiciones_estado_mas: 'Regular',
+        condiciones_estado_mas: '',
         tiempo_en_refugio_mas: '',
-        genero_mas: 'Macho',
-        estado_mas: 'activo',
+        genero_mas: '',
+        estado_mas: '',
         fk_raza_mas: '',
-        imagen_pet: '',
+        imagen_pet: null,
     });
 
     const handleInputChange = (name, value) => {
-        setForm({ ...form, [name]: value });
+        setPetData({ ...petData, [name]: value });
     };
 
-    const handleImagePicker = () => {
-        const options = {
-            mediaType: 'photo',
-            quality: 1,
-        };
-
-        launchImageLibrary(options, (response) => {
+    const handleImagePick = () => {
+        launchImageLibrary({ mediaType: 'photo', includeBase64: true }, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');
-            } else if (response.errorCode) {
+            } else if (response.errorMessage) {
                 console.log('ImagePicker Error: ', response.errorMessage);
             } else {
-                const source = { uri: response.assets[0].uri };
-                setForm({ ...form, imagen_pet: source.uri });
+                const image = {
+                    uri: response.assets[0].uri,
+                    type: response.assets[0].type,
+                    name: response.assets[0].fileName,
+                };
+                setPetData({ ...petData, imagen_pet: image });
             }
         });
     };
 
-    const handleSubmit = () => {
-        // Aquí puedes manejar el envío del formulario, por ejemplo, realizando una solicitud a tu backend
-        console.log(form);
+    const handleSubmit = async () => {
+        const formData = new FormData();
+        Object.keys(petData).forEach(key => {
+            formData.append(key, petData[key]);
+        });
+        try {
+            const response = await axiosClient.post(`${IP}/v1/pets`, formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data',
+                },
+            });
+            if (response.status === 200) {
+                Alert.alert('Éxito', 'Mascota registrada exitosamente');
+            } else {
+                Alert.alert('Error', response.data.message);
+            }
+        } catch (error) {
+            console.error('Error al registrar la mascota:', error);
+            Alert.alert('Error', 'Hubo un problema al intentar registrar la mascota.');
+        }
     };
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                <Text style={styles.label}>Nombre</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.nombre_mas}
-                    onChangeText={(text) => handleInputChange('nombre_mas', text)}
-                />
-                <Text style={styles.label}>Edad</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.edad_mas}
-                    onChangeText={(text) => handleInputChange('edad_mas', text)}
-                    keyboardType="numeric"
-                />
-                <Text style={styles.label}>Tamaño</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.tamano_mas}
-                    onChangeText={(text) => handleInputChange('tamano_mas', text)}
-                    keyboardType="numeric"
-                />
-                <Text style={styles.label}>Peso</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.peso_mas}
-                    onChangeText={(text) => handleInputChange('peso_mas', text)}
-                    keyboardType="numeric"
-                />
-                <Text style={styles.label}>Descripción</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.descripcion_mas}
-                    onChangeText={(text) => handleInputChange('descripcion_mas', text)}
-                />
-                <Text style={styles.label}>Vacunación</Text>
-                <Picker
-                    selectedValue={form.vacunacion_mas}
-                    style={styles.input}
-                    onValueChange={(itemValue) => handleInputChange('vacunacion_mas', itemValue)}
-                >
-                    <Picker.Item label="Si" value="Si" />
-                    <Picker.Item label="No" value="No" />
-                </Picker>
-                <Text style={styles.label}>Esterilización/Castración</Text>
-                <Picker
-                    selectedValue={form.esterilizacion_castracion_mas}
-                    style={styles.input}
-                    onValueChange={(itemValue) => handleInputChange('esterilizacion_castracion_mas', itemValue)}
-                >
-                    <Picker.Item label="Si" value="Si" />
-                    <Picker.Item label="No" value="No" />
-                </Picker>
-                <Text style={styles.label}>Enfermedades</Text>
-                <Picker
-                    selectedValue={form.enfermedades_mas}
-                    style={styles.input}
-                    onValueChange={(itemValue) => handleInputChange('enfermedades_mas', itemValue)}
-                >
-                    <Picker.Item label="Si" value="Si" />
-                    <Picker.Item label="No" value="No" />
-                </Picker>
-                <Text style={styles.label}>Tratamientos</Text>
-                <Picker
-                    selectedValue={form.tratamientos_mas}
-                    style={styles.input}
-                    onValueChange={(itemValue) => handleInputChange('tratamientos_mas', itemValue)}
-                >
-                    <Picker.Item label="Si" value="Si" />
-                    <Picker.Item label="No" value="No" />
-                </Picker>
-                <Text style={styles.label}>Energía</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.energia_mas}
-                    onChangeText={(text) => handleInputChange('energia_mas', text)}
-                    keyboardType="numeric"
-                />
-                <Text style={styles.label}>Compatibilidad</Text>
-                <Picker
-                    selectedValue={form.compatibilidad_mas}
-                    style={styles.input}
-                    onValueChange={(itemValue) => handleInputChange('compatibilidad_mas', itemValue)}
-                >
-                    <Picker.Item label="Si" value="Si" />
-                    <Picker.Item label="No" value="No" />
-                </Picker>
-                <Text style={styles.label}>Hábitos</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.habitos_mas}
-                    onChangeText={(text) => handleInputChange('habitos_mas', text)}
-                />
-                <Text style={styles.label}>Necesidades</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.necesidades_mas}
-                    onChangeText={(text) => handleInputChange('necesidades_mas', text)}
-                />
-                <Text style={styles.label}>Lugar de Rescate</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.lugar_rescate_mas}
-                    onChangeText={(text) => handleInputChange('lugar_rescate_mas', text)}
-                />
-                <Text style={styles.label}>Condiciones de Estado</Text>
-                <Picker
-                    selectedValue={form.condiciones_estado_mas}
-                    style={styles.input}
-                    onValueChange={(itemValue) => handleInputChange('condiciones_estado_mas', itemValue)}
-                >
-                    <Picker.Item label="Mal" value="Mal" />
-                    <Picker.Item label="Regular" value="Regular" />
-                    <Picker.Item label="Bien" value="Bien" />
-                    <Picker.Item label="Muy Bien" value="Muy Bien" />
-                </Picker>
-                <Text style={styles.label}>Tiempo en Refugio</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.tiempo_en_refugio_mas}
-                    onChangeText={(text) => handleInputChange('tiempo_en_refugio_mas', text)}
-                    keyboardType="numeric"
-                />
-                <Text style={styles.label}>Género</Text>
-                <Picker
-                    selectedValue={form.genero_mas}
-                    style={styles.input}
-                    onValueChange={(itemValue) => handleInputChange('genero_mas', itemValue)}
-                >
-                    <Picker.Item label="Macho" value="Macho" />
-                    <Picker.Item label="Hembra" value="Hembra" />
-                </Picker>
-                <Text style={styles.label}>Estado</Text>
-                <Picker
-                    selectedValue={form.estado_mas}
-                    style={styles.input}
-                    onValueChange={(itemValue) => handleInputChange('estado_mas', itemValue)}
-                >
-                    <Picker.Item label="activo" value="activo" />
-                    <Picker.Item label="inactivo" value="inactivo" />
-                    <Picker.Item label="espera" value="espera" />
-                </Picker>
-                <Text style={styles.label}>Raza</Text>
-                <TextInput
-                    style={styles.input}
-                    value={form.fk_raza_mas}
-                    onChangeText={(text) => handleInputChange('fk_raza_mas', text)}
-                />
-                <Text style={styles.label}>Imagen</Text>
-                <Button title="Seleccionar Imagen" onPress={handleImagePicker} />
-                {form.imagen_pet ? <Image source={{ uri: form.imagen_pet }} style={styles.image} /> : null}
-                <Button title="Registrar Mascota" onPress={handleSubmit} />
-            </View>
+        <ScrollView contentContainerStyle={styles.container}>
+            <Text style={styles.title}>Registrar Mascota</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Nombre"
+                value={petData.nombre_mas}
+                onChangeText={(value) => handleInputChange('nombre_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Edad (meses)"
+                value={petData.edad_mas}
+                keyboardType="numeric"
+                onChangeText={(value) => handleInputChange('edad_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Tamaño (cm)"
+                value={petData.tamano_mas}
+                keyboardType="numeric"
+                onChangeText={(value) => handleInputChange('tamano_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Peso (kilos)"
+                value={petData.peso_mas}
+                keyboardType="numeric"
+                onChangeText={(value) => handleInputChange('peso_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Descripción"
+                value={petData.descripcion_mas}
+                onChangeText={(value) => handleInputChange('descripcion_mas', value)}
+            />
+            <RNPickerSelect
+                onValueChange={(value) => handleInputChange('vacunacion_mas', value)}
+                items={[
+                    { label: 'Sí', value: 'Sí' },
+                    { label: 'No', value: 'No' },
+                ]}
+                style={pickerSelectStyles}
+                placeholder={{ label: 'Vacunación', value: null }}
+            />
+            <RNPickerSelect
+                onValueChange={(value) => handleInputChange('esterilizacion_castracion_mas', value)}
+                items={[
+                    { label: 'Sí', value: 'Sí' },
+                    { label: 'No', value: 'No' },
+                ]}
+                style={pickerSelectStyles}
+                placeholder={{ label: 'Esterilización/Castración', value: null }}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Enfermedades"
+                value={petData.enfermedades_mas}
+                onChangeText={(value) => handleInputChange('enfermedades_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Tratamientos"
+                value={petData.tratamientos_mas}
+                onChangeText={(value) => handleInputChange('tratamientos_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Energía"
+                value={petData.energia_mas}
+                keyboardType="numeric"
+                onChangeText={(value) => handleInputChange('energia_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Compatibilidad"
+                value={petData.compatibilidad_mas}
+                onChangeText={(value) => handleInputChange('compatibilidad_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Hábitos"
+                value={petData.habitos_mas}
+                onChangeText={(value) => handleInputChange('habitos_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Necesidades especiales"
+                value={petData.necesidades_mas}
+                onChangeText={(value) => handleInputChange('necesidades_mas', value)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Lugar de rescate"
+                value={petData.lugar_rescate_mas}
+                onChangeText={(value) => handleInputChange('lugar_rescate_mas', value)}
+            />
+            <RNPickerSelect
+                onValueChange={(value) => handleInputChange('condiciones_estado_mas', value)}
+                items={[
+                    { label: 'Mal', value: 'Mal' },
+                    { label: 'Regular', value: 'Regular' },
+                    { label: 'Bien', value: 'Bien' },
+                    { label: 'Muy Bien', value: 'Muy Bien' },
+                ]}
+                style={pickerSelectStyles}
+                placeholder={{ label: 'Condiciones Estado', value: null }}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Tiempo en refugio (meses)"
+                value={petData.tiempo_en_refugio_mas}
+                keyboardType="numeric"
+                onChangeText={(value) => handleInputChange('tiempo_en_refugio_mas', value)}
+            />
+            <RNPickerSelect
+                onValueChange={(value) => handleInputChange('genero_mas', value)}
+                items={[
+                    { label: 'Macho', value: 'Macho' },
+                    { label: 'Hembra', value: 'Hembra' },
+                ]}
+                style={pickerSelectStyles}
+                placeholder={{ label: 'Género', value: null }}
+            />
+            <RNPickerSelect
+                onValueChange={(value) => handleInputChange('estado_mas', value)}
+                items={[
+                    { label: 'Activo', value: 'activo' },
+                    { label: 'Inactivo', value: 'inactivo' },
+                    { label: 'Espera', value: 'espera' },
+                ]}
+                style={pickerSelectStyles}
+                placeholder={{ label: 'Estado', value: null }}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="ID Raza"
+                value={petData.fk_raza_mas}
+                keyboardType="numeric"
+                onChangeText={(value) => handleInputChange('fk_raza_mas', value)}
+            />
+            <Button title="Seleccionar Imagen" onPress={handleImagePick} />
+            {petData.imagen_pet && (
+                <View style={styles.imageContainer}>
+                    <Image source={{ uri: petData.imagen_pet.uri }} style={styles.image} />
+                </View>
+            )}
+            <Button title="Registrar Mascota" onPress={handleSubmit} />
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20
+        flexGrow: 1,
+        padding: 20,
+        backgroundColor: '#fff',
     },
-    label: {
-        fontSize: 16,
-        marginBottom: 5
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
     },
     input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-        marginBottom: 15,
-        paddingLeft: 10,
-        borderRadius: 5
+        marginBottom: 10,
+        paddingHorizontal: 10,
     },
-    image: {
-        width: 100,
-        height: 100,
-        marginBottom: 15
-}
 });
 
-export default FormPet;
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+    },
+    inputAndroid: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+    },
+});
+
+export default RegisterPetForm;

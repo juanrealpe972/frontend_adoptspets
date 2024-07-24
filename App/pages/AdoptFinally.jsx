@@ -9,28 +9,26 @@ import axios from 'axios';
 
 const AdoptFinally = ({ visible, onClose, IdPet }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
     const handleAdopt = async () => {
         setIsLoading(true);
         try {
-            const adoptanteData = await AsyncStorage.getItem('usuario');
-            const userData = JSON.parse(adoptanteData);
-
-            const response = await axios.put(`${IP}/v1/petses/${IdPet.pk_id_mas}`, {
+            const response = await axios.put(`${IP}/v1/petses/${id}`, {
                 adoptanteId: userData.pk_id_user
             });
-
+            console.log(response.data);
             if (response.status === 200) {
                 Alert.alert('Éxito', 'Se registró su petición exitosamente');
-                navigation.navigate('Visitante')
+                navigation.navigate('Visitante');
             } else {
-                Alert.alert('Error', response.data.message);
+                Alert.alert('Error', response.data.message || 'Error desconocido');
             }
         } catch (error) {
             Alert.alert('Error', 'Hubo un problema al intentar adoptar la mascota.');
             console.error(error);
-        } finally {
+        }
+        finally {
             setIsLoading(false);
             onClose();
         }
@@ -39,10 +37,18 @@ const AdoptFinally = ({ visible, onClose, IdPet }) => {
     return (
         <View style={{ flex: 1 }}>
             <CustomModal visible={visible} onClose={onClose}>
-                <Text>¿Estás seguro que deseas adoptar a {IdPet.nombre_mas}?</Text>
-                <View>
-                    <Button title="Sí, adoptar" onPress={handleAdopt} />
-                    <Button title="Cancelar" onPress={onClose} />
+                <Text style={styles.modalText}>¿Estás seguro que deseas adoptar a {IdPet.nombre_mas}?</Text>
+                <View style={styles.buttonContainer}>
+                    <Button
+                        title="Sí, adoptar"
+                        onPress={handleAdopt}
+                        color="#E89551"
+                    />
+                    <Button
+                        title="Cancelar"
+                        onPress={onClose}
+                        color="#E89551"
+                    />
                 </View>
             </CustomModal>
             <Modal
@@ -73,6 +79,16 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+        gap: 20
+    },
+    modalText: {
+        fontSize: 16,
+        marginBottom: 20,
     },
 });
 

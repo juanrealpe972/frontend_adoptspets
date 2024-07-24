@@ -38,7 +38,7 @@ function Home({ navigation }) {
         const jsonValue = await AsyncStorage.getItem('usuario');
         if (jsonValue !== null) {
           const userData = JSON.parse(jsonValue);
-          setUserRole(userData.rol_user)
+          setUserRole(userData.rol_user);
         } else {
           console.log('No se encontraron datos de usuario en AsyncStorage');
         }
@@ -71,33 +71,37 @@ function Home({ navigation }) {
       ) : (
         <>
           {renderRegisterPetsButton()}
-          <FlatList
-            data={data}
-            keyExtractor={item => item.pk_id_mas.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.petCard}>
-                <View style={styles.petViewImage}>
-                  <Image
-                    source={{ uri: `${IP}/pets/${item.imagen_pet}` }}
-                    style={styles.petImage}
-                  />
-                </View>
-                <View style={styles.petInfo}>
-                  <View style={styles.petDetailsLeft}>
-                    <Text style={styles.petName}>{item.nombre_mas}</Text>
-                    <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
+          {data.length === 0 ? (
+            <Text style={styles.noPetsMessage}>No hay mascotas disponibles para adoptar en este momento.</Text>
+          ) : (
+            <FlatList
+              data={data}
+              keyExtractor={item => item.pk_id_mas.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.petCard}>
+                  <View style={styles.petViewImage}>
+                    <Image
+                      source={{ uri: `${IP}/pets/${item.imagen_pet}` }}
+                      style={styles.petImage}
+                    />
                   </View>
-                  <View style={styles.petDetailsRight}>
-                    <Text style={styles.petCategory}>{item.nombre_cate}</Text>
-                    <Text style={styles.petBreed}>{item.nombre_raza}</Text>
+                  <View style={styles.petInfo}>
+                    <View style={styles.petDetailsLeft}>
+                      <Text style={styles.petName}>{item.nombre_mas}</Text>
+                      <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
+                    </View>
+                    <View style={styles.petDetailsRight}>
+                      <Text style={styles.petCategory}>{item.nombre_cate}</Text>
+                      <Text style={styles.petBreed}>{item.nombre_raza}</Text>
+                    </View>
                   </View>
+                  <TouchableOpacity style={styles.adoptButton} onPress={() => handlePressAdoptar(item.pk_id_mas)}>
+                    <Text style={styles.adoptButtonText}>Visualizar</Text>
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.adoptButton} onPress={() => handlePressAdoptar(item.pk_id_mas)}>
-                  <Text style={styles.adoptButtonText}>Visualizar</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          />
+              )}
+            />
+          )}
         </>
       )}
     </View>
@@ -109,7 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 20,
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   petCard: {
     padding: 10,
@@ -124,12 +128,12 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 8,
     borderColor: "#000",
-    borderWidth: 0.4
+    borderWidth: 0.4,
   },
   petViewImage: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   petImage: {
     width: '95%',
@@ -137,13 +141,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 12,
     borderColor: "#000",
-    borderWidth: 0.4
+    borderWidth: 0.4,
   },
   petInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
-    marginHorizontal:20
+    marginHorizontal: 20,
   },
   petDetailsLeft: {
     flex: 1,
@@ -195,6 +199,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 22,
     fontWeight: 'bold',
+  },
+  noPetsMessage: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#E89551',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

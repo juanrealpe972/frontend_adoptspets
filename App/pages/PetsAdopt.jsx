@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     FlatList,
@@ -9,9 +9,9 @@ import {
     Image,
 } from 'react-native';
 import axios from 'axios';
-import {IP} from '../api/IP';
+import { IP } from '../api/IP';
 
-function Home({navigation}) {
+function Home({ navigation }) {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
@@ -31,23 +31,25 @@ function Home({navigation}) {
     }, []);
 
     const handlePressAdoptar = id => {
-        navigation.navigate('PetDue', {petIdWithDue: id});
+        navigation.navigate('PetDue', { petIdWithDue: id });
     };
 
     return (
         <View style={styles.container}>
             {isLoading ? (
-                <ActivityIndicator style={{marginTop: 20}} />
+                <ActivityIndicator style={{ marginTop: 20 }} />
             ) : (
-                <>
+                data.length === 0 ? (
+                    <Text style={styles.noPetsMessage}>No hay mascotas en espera en este momento.</Text>
+                ) : (
                     <FlatList
                         data={data}
                         keyExtractor={item => item.pk_id_mas.toString()}
-                        renderItem={({item}) => (
+                        renderItem={({ item }) => (
                             <View style={styles.petCard}>
                                 <View style={styles.petViewImage}>
                                     <Image
-                                        source={{uri: `${IP}/pets/${item.imagen_pet}`}}
+                                        source={{ uri: `${IP}/pets/${item.imagen_pet}` }}
                                         style={styles.petImage}
                                     />
                                 </View>
@@ -72,7 +74,7 @@ function Home({navigation}) {
                             </View>
                         )}
                     />
-                </>
+                )
             )}
         </View>
     );
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: '#fff',
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 8,
@@ -157,7 +159,13 @@ const styles = StyleSheet.create({
         color: '#001528',
         fontSize: 22,
         fontWeight: 'bold',
-    }
+    },
+    noPetsMessage: {
+        fontSize: 18,
+        color: '#666',
+        textAlign: 'center',
+        marginTop: 20,
+    },
 });
 
 export default Home;
