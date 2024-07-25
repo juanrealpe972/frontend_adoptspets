@@ -5,9 +5,11 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import LinkBoton from '../components/atoms/button/linkboton';
 import { useAuthContext } from '../context/AuthContext';
 import axiosClient from '../api/axios';
+import axios from 'axios';
+import { IP } from '../api/IP';
 
 const FormUserPage = () => {
-    const { getDeparts, departamentos, municipios, getMunis, setLoginUser, idUser } = useAuthContext()
+    const { getDeparts, departamentos, municipios, getMunis, setLoginUser, idUser, setMunicipios } = useAuthContext()
     const navigation = useNavigation()
     const route = useRoute();
     const { mode } = route.params;
@@ -38,6 +40,7 @@ const FormUserPage = () => {
 
     useEffect(() => {
         getDeparts();
+        setMunicipios([])
     }, []);
 
     useEffect(() => {
@@ -72,8 +75,10 @@ const FormUserPage = () => {
     }, [mode, idUser]);
 
     const handleDepartamentoChange = async (value) => {
-        handleInputChange('departamento', value);
-        getMunis(value)
+        if (value) {
+            handleInputChange('fk_id_departamento', value);
+            getMunis(value);
+        }
     };
 
     const ahoraIniciar = () => {
@@ -120,7 +125,8 @@ const FormUserPage = () => {
     
         try {
             if (mode === "create") {
-                const response = await axiosClient.post(`/v1/users`, data);
+                console.log(data);
+                const response = await axios.post(`${IP}/v1/users`, data);
                 Alert.alert("Éxito", response.data.message);
                 navigation.navigate('FirstPage');
             } else if (mode === "update") {
@@ -143,6 +149,7 @@ const FormUserPage = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Cedula"
+                placeholderTextColor="#BFBFBF"
                 value={formData.pk_id_user}
                 onChangeText={(value) => handleInputChange('pk_id_user', value)}
                 keyboardType="phone-pad"
@@ -151,6 +158,7 @@ const FormUserPage = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Nombre"
+                placeholderTextColor="#BFBFBF"
                 value={formData.nombre_user}
                 onChangeText={(value) => handleInputChange('nombre_user', value)}
             />
@@ -158,6 +166,7 @@ const FormUserPage = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Email"
+                placeholderTextColor="#BFBFBF"
                 value={formData.email_user}
                 onChangeText={(value) => handleInputChange('email_user', value)}
                 keyboardType="email-address"
@@ -166,6 +175,7 @@ const FormUserPage = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Teléfono"
+                placeholderTextColor="#BFBFBF"
                 value={formData.telefono_user}
                 onChangeText={(value) => handleInputChange('telefono_user', value)}
                 keyboardType="phone-pad"
@@ -176,6 +186,7 @@ const FormUserPage = () => {
                     <TextInput
                         style={styles.input}
                         placeholder="Contraseña"
+                        placeholderTextColor="#BFBFBF"
                         value={formData.password_user}
                         onChangeText={(value) => handleInputChange('password_user', value)}
                         secureTextEntry
@@ -184,30 +195,25 @@ const FormUserPage = () => {
             )}
             <View style={styles.pickerContainer}>
                 <View style={styles.pickerItem}>
-                    <Text style={styles.label}>Experiencia:</Text>
+                    <Text style={styles.label}>Departamento:</Text>
                     <RNPickerSelect
-                        style={{
-                            ...pickerSelectStyles,
-                            inputIOS: { ...pickerSelectStyles.inputIOS, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                            inputAndroid: { ...pickerSelectStyles.inputAndroid, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                        }}
-                        placeholder={{ label: 'Experiencia previa...', value: null, }}
-                        value={formData.experiencia_user}
-                        onValueChange={(value) => handleInputChange('experiencia_user', value)}
-                        items={[
-                            { label: 'Sí', value: 'Si' },
-                            { label: 'No', value: 'No' },
-                        ]}
+                        style={pickerSelectStyles}
+                        placeholder={{ label: 'Departamento...', value: null }}
+                        value={formData.fk_id_departamento}
+                        onValueChange={handleDepartamentoChange}
+                        items={departamentos.map(dep => ({ label: dep.nombre_depar, value: dep.pk_id_depar }))}
                     />
                 </View>
                 <View style={styles.pickerItem}>
-                    <Text style={styles.label}>Horas disponibles:</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Disponibilidad horas"
-                        value={formData.disponibilidad_user}
-                        onChangeText={(value) => handleInputChange('disponibilidad_user', value)}
-                        keyboardType="numeric"
+                    <Text style={styles.label}>Municipio:</Text>
+                    <RNPickerSelect
+                        style={pickerSelectStyles}
+                        borderWidth={2}
+                        borderColor="#BFBFBF"
+                        placeholder={{ label: 'Municipio...', value: null }}
+                        value={formData.fk_id_municipio}
+                        onValueChange={(value) => handleInputChange('fk_id_municipio', value)}
+                        items={municipios.map(muni => ({ label: muni.nombre_muni, value: muni.pk_id_muni }))}
                     />
                 </View>
             </View>
@@ -215,11 +221,7 @@ const FormUserPage = () => {
                 <View style={styles.pickerItem}>
                     <Text style={styles.label}>Ubicación:</Text>
                     <RNPickerSelect
-                        style={{
-                            ...pickerSelectStyles,
-                            inputIOS: { ...pickerSelectStyles.inputIOS, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                            inputAndroid: { ...pickerSelectStyles.inputAndroid, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                        }}
+                        style={pickerSelectStyles}
                         placeholder={{ label: 'Ubicación...', value: null, }}
                         value={formData.ubicacion_user}
                         onValueChange={(value) => handleInputChange('ubicacion_user', value)}
@@ -232,11 +234,7 @@ const FormUserPage = () => {
                 <View style={styles.pickerItem}>
                     <Text style={styles.label}>Vivienda:</Text>
                     <RNPickerSelect
-                        style={{
-                            ...pickerSelectStyles,
-                            inputIOS: { ...pickerSelectStyles.inputIOS, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                            inputAndroid: { ...pickerSelectStyles.inputAndroid, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                        }}
+                        style={pickerSelectStyles}
                         placeholder={{ label: 'Tipo de vivienda...', value: null, }}
                         value={formData.tipo_vivienda_user}
                         onValueChange={(value) => handleInputChange('tipo_vivienda_user', value)}
@@ -250,13 +248,20 @@ const FormUserPage = () => {
             </View>
             <View style={styles.pickerContainer}>
                 <View style={styles.pickerItem}>
+                    <Text style={styles.label}>Horas en casa:</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Horas en casa"
+                        placeholderTextColor="#BFBFBF"
+                        value={formData.horas_en_casa_user}
+                        onChangeText={(value) => handleInputChange('horas_en_casa_user', value)}
+                        keyboardType="numeric"
+                    />
+                </View>
+                <View style={styles.pickerItem}>
                     <Text style={styles.label}>Espacio disponible:</Text>
                     <RNPickerSelect
-                        style={{
-                            ...pickerSelectStyles,
-                            inputIOS: { ...pickerSelectStyles.inputIOS, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                            inputAndroid: { ...pickerSelectStyles.inputAndroid, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                        }}
+                        style={pickerSelectStyles}
                         placeholder={{ label: 'Espacio disponible...', value: null, }}
                         value={formData.espacio_dispo_user}
                         onValueChange={(value) => handleInputChange('espacio_dispo_user', value)}
@@ -267,14 +272,47 @@ const FormUserPage = () => {
                         ]}
                     />
                 </View>
+            </View>
+            <View style={styles.pickerItemFull}>
+                <Text style={styles.label}>Experiencia con mascotas:</Text>
+                <RNPickerSelect
+                    style={pickerSelectStyles}
+                    placeholder={{ label: 'Experiencia previa...', value: null, }}
+                    value={formData.experiencia_user}
+                    onValueChange={(value) => handleInputChange('experiencia_user', value)}
+                    items={[
+                        { label: 'Sí', value: 'Si' },
+                        { label: 'No', value: 'No' },
+                    ]}
+                />
+            </View>
+            <View style={styles.pickerItemFull}>
+                <Text style={styles.label}>Cantidad de mascotas en casa:</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Cantidad de mascotas en el hogar"
+                    placeholderTextColor="#BFBFBF"
+                    value={formData.canti_mas_hogar_user}
+                    onChangeText={(value) => handleInputChange('canti_mas_hogar_user', value)}
+                    keyboardType="numeric"
+                />
+            </View>
+            <View style={styles.pickerItemFull}>
+                <Text style={styles.label}>Horas disponibles para cuidar una mascota:</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Disponibilidad horas"
+                    placeholderTextColor="#BFBFBF"
+                    value={formData.disponibilidad_user}
+                    onChangeText={(value) => handleInputChange('disponibilidad_user', value)}
+                    keyboardType="numeric"
+                />
+            </View>
+            <View style={styles.pickerContainer}>
                 <View style={styles.pickerItem}>
                     <Text style={styles.label}>Economia:</Text>
                     <RNPickerSelect
-                        style={{
-                            ...pickerSelectStyles,
-                            inputIOS: { ...pickerSelectStyles.inputIOS, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                            inputAndroid: { ...pickerSelectStyles.inputAndroid, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                        }}
+                        style={pickerSelectStyles}
                         placeholder={{ label: 'Capacidad económica...', value: null, }}
                         value={formData.economia_user}
                         onValueChange={(value) => handleInputChange('economia_user', value)}
@@ -284,58 +322,6 @@ const FormUserPage = () => {
                             { label: 'Buena', value: 'Buena' },
                             { label: 'Muy Buena', value: 'Muy Buena' },
                         ]}
-                    />
-                </View>
-            </View>
-            <View style={styles.pickerContainer}>
-                <View style={styles.pickerItem}>
-                    <Text style={styles.label}>¿Mas mascotas en casa?:</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Cantidad de mascotas en el hogar"
-                        value={formData.canti_mas_hogar_user}
-                        onChangeText={(value) => handleInputChange('canti_mas_hogar_user', value)}
-                        keyboardType="numeric"
-                    />
-                </View>
-                <View style={styles.pickerItem}>
-                    <Text style={styles.label}>Horas en casa:</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Horas en casa"
-                        value={formData.horas_en_casa_user}
-                        onChangeText={(value) => handleInputChange('horas_en_casa_user', value)}
-                        keyboardType="numeric"
-                    />
-                </View>
-            </View>
-            <View style={styles.pickerContainer}>
-                <View style={styles.pickerItem}>
-                    <Text style={styles.label}>Departamento:</Text>
-                    <RNPickerSelect
-                        style={{
-                            ...pickerSelectStyles,
-                            inputIOS: { ...pickerSelectStyles.inputIOS, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                            inputAndroid: { ...pickerSelectStyles.inputAndroid, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                        }}
-                        placeholder={{ label: 'Departamento...', value: null, }}
-                        value={formData.fk_id_departamento}
-                        onValueChange={handleDepartamentoChange}
-                        items={departamentos.map(dep => ({ label: dep.nombre_depar, value: dep.pk_id_depar }))}
-                    />
-                </View>
-                <View style={styles.pickerItem}>
-                    <Text style={styles.label}>Municipio:</Text>
-                    <RNPickerSelect
-                        style={{
-                            ...pickerSelectStyles,
-                            inputIOS: { ...pickerSelectStyles.inputIOS, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                            inputAndroid: { ...pickerSelectStyles.inputAndroid, height: 40, borderColor: '#000', borderWidth: 1, marginBottom: 10, },
-                        }}
-                        placeholder={{ label: 'Municipio...', value: null, }}
-                        value={formData.fk_id_municipio}
-                        onValueChange={(value) => handleInputChange('fk_id_municipio', value)}
-                        items={municipios.map(mun => ({ label: mun.nombre_muni, value: mun.pk_id_muni }))}
                     />
                 </View>
             </View>
@@ -357,14 +343,15 @@ const FormUserPage = () => {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        paddingHorizontal:25,
+        paddingHorizontal: 25,
         backgroundColor: "#FDFFFE",
-        paddingBottom:20
+        paddingBottom: 20
     },
     label: {
         fontSize: 16,
         marginBottom: 5,
-        textAlign:"left"
+        textAlign:"left",
+        color:"black"
     },
     boton: {
         backgroundColor: '#000',
@@ -372,16 +359,18 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 40,
-        marginVertical: 45,
-        textAlign:"center"
+        marginVertical: 25,
+        textAlign:"center",
+        color:"black"
     },
     input: {
         width: '100%',
-        height: 40,
-        borderColor: '#ccc',
-        borderWidth: 1,
+        height: 56,
         marginBottom: 10,
         paddingHorizontal: 10,
+        color:"black",
+        backgroundColor:"#F3F3F3",
+        fontSize: 16
     },
     pickerContainer: {
         flexDirection: 'row',
@@ -391,6 +380,9 @@ const styles = StyleSheet.create({
     },
     pickerItem: {
         width: '48%',
+    },
+    pickerItemFull: {
+        width: '100%',
     },
     loginPrompt: {
         display: 'flex',
@@ -410,22 +402,20 @@ const styles = StyleSheet.create({
 
 const pickerSelectStyles = StyleSheet.create({
     inputIOS: {
-        height: 40,
         borderColor: '#ccc',
         borderWidth: 1,
+        borderRadius: 5,
         paddingHorizontal: 10,
-        color: 'black',
+        paddingVertical: 12,
         fontSize: 16,
-        paddingTop: 13,
+        color: '#000',
     },
     inputAndroid: {
-        height: 40,
         borderColor: '#ccc',
         borderWidth: 1,
-        paddingHorizontal: 10,
-        color: 'black',
-        fontSize: 16,
-        paddingTop: 13,
+        borderRadius: 5,
+        color: '#000',
+        backgroundColor:"#F3F3F3"
     },
 });
 

@@ -19,7 +19,6 @@ function ListPetPage() {
 
     const getPetDetails = async () => {
         try {
-            console.log("Fetching pet details for ID:", petId);
             const response = await axiosClient.get(`${IP}/v1/petsone/${petId}`);
             if (response.data && response.data.data) {
                 setPet(response.data.data[0]);
@@ -143,18 +142,22 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 10,
         textAlign: "center",
+        color:"black"
     },
     infoSection: {
         width: '100%',
         marginTop: 20,
+        color:"black"
     },
     infoTitle: {
         fontSize: 22,
         fontWeight: 'bold',
+        color:"black"
     },
     infoText: {
         fontSize: 18,
         marginTop: 5,
+        color:"black"
     },
     updateButton: {
         width: 180,

@@ -33,7 +33,7 @@ export default function FirstPage() {
           style={styles.logo}
         />
         <Text style={[Typography.subtitle, styles.customSubtitle]}>
-          Adopts Pets es una aplicación para que puedas adoptar la mascota de tu gusto de manera fácil y rápida.
+          Adopts Pets una aplicación para que puedas adoptar la mascota de tu gusto de manera fácil y rápida.
         </Text>
         <View style={styles.footer}>
           <LinkBoton press={() => setLoginUser(true)} text={'Iniciar Sesión'} />
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 30,
+    paddingBottom: 27,
   },
   logo: {
     width: 300,

@@ -78,13 +78,10 @@ const LoginPage = ({visible, onClose}) => {
         const {token, user} = response.data;
         if (token && user) {
           await AsyncStorage.setItem('token', token);
-          console.log('Token obtenido al iniciar sesión:', token);
           await AsyncStorage.setItem('usuario', JSON.stringify(user));
           setLoginSuccess(true);
           setIsLoading(false);
           setIsAuthenticated(true);
-          console.log(token);
-          console.log(JSON.stringify(user));
           navigation.navigate('Visitante');
           Alert.alert('Inicio de sesión exitoso');
         } else {

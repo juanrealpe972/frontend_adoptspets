@@ -63,79 +63,72 @@ const MiProfile = () => {
                     style={styles.headerImage}
                 />
             </View>
-
             <View style={styles.contentContainer}>
-                <Image
-                    source={require('../resources/logo_adoptpets.jpg')}
-                    resizeMode="contain"
-                    style={styles.profileImage}
-                />
-
                 <Text style={styles.nameText}>{userData.nombre_user || "Nombre no disponible"}</Text>
                 {renderUpdateButton()}
                 <View style={styles.additionalInfoContainer}>
                     <View style={styles.additionalInfoRow}>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Teléfono:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.telefono_user || "Teléfono no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.telefono_user || "Teléfono no disponible"}</Text>
                         </Text>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Tipo de vivienda:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.tipo_vivienda_user || "Vivienda no disponibles"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.tipo_vivienda_user || "Vivienda no disponibles"}</Text>
                         </Text>
                     </View>
                     <View style={styles.additionalInfoRow}>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Ubicación:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.ubicacion_user || "Ubicación no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.ubicacion_user || "Ubicación no disponible"}</Text>
                         </Text>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Horas en casa:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.horas_en_casa_user || "Horas no disponibles"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.horas_en_casa_user || "Horas no disponibles"}</Text>
                         </Text>
                     </View>
                     <View style={styles.additionalInfoRow}>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Mascotas en casa:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.canti_mas_hogar_user >= 0 ? userData.canti_mas_hogar_user : "No hay disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.canti_mas_hogar_user >= 0 ? userData.canti_mas_hogar_user : "No hay disponible"}</Text>
                         </Text>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Economía:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.economia_user || "Economía no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.economia_user || "Economía no disponible"}</Text>
                         </Text>
                     </View>
                     <Text style={styles.additionalInfoTextEmail}>
                         <Text style={styles.additionalInfoLabel}>Correo electrónico:</Text>
-                        <Text style={styles.additionalInfoValue}>{userData.email_user || "Correo electrónico no disponible"}</Text>
+                        <Text style={styles.additionalInfoValue}> {userData.email_user || "Correo electrónico no disponible"}</Text>
                     </Text>
                     <View style={styles.additionalInfoRow}>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Rol:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.rol_user || "Rol no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.rol_user || "Rol no disponible"}</Text>
                         </Text>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Espacio Hogar:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.espacio_dispo_user || "Espacio disponible no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.espacio_dispo_user || "Espacio disponible no disponible"}</Text>
                         </Text>
                     </View>
                     <View style={styles.additionalInfoRow}>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Experiencia:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.experiencia_user || "Experiencia no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.experiencia_user || "Experiencia no disponible"}</Text>
                         </Text>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Disponibilidad:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.disponibilidad_user || "Disponibilidad no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.disponibilidad_user || "Disponibilidad no disponible"}</Text>
                         </Text>
                     </View>
                     <View style={styles.additionalInfoRow}>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Municipio:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.nombre_muni || "Municipio no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.nombre_muni || "Municipio no disponible"}</Text>
                         </Text>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Departamento:</Text>
-                            <Text style={styles.additionalInfoValue}>{userData.nombre_depar || "Nombre departamento no disponible"}</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.nombre_depar || "Nombre departamento no disponible"}</Text>
                         </Text>
                     </View>
                 </View>
@@ -171,6 +164,7 @@ const styles = StyleSheet.create({
     nameText: {
         fontSize: 24,
         marginVertical: 8,
+        color: 'black',
     },
     updateButton: {
         width: 180,

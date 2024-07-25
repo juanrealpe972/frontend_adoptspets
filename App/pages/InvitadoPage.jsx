@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
     petName: {
         fontSize: 25,
         fontWeight: 'bold',
+        color:"black"
     },
     petLocation: {
         fontSize: 15,
@@ -136,10 +137,12 @@ const styles = StyleSheet.create({
     petCategory: {
         fontSize: 25,
         fontWeight: 'bold',
+        color:"black"
     },
     petBreed: {
         fontSize: 15,
         marginTop: 4,
+        color:"black"
     },
     adoptButton: {
         backgroundColor: '#E89551',

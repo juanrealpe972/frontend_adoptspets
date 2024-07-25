@@ -52,7 +52,7 @@ const TabNavigationVen = () => {
                   <Feather name="list" size={26} color="#FFF" />
                 </TouchableOpacity>
                 <View style={{ flex: 1, alignItems: 'center' }}>
-                  <Text style={{ color:'#FFF', fontSize: 26, fontWeight: 'bold' }}>
+                  <Text style={{ color:'#FFF', fontSize: 20, fontWeight: 'bold' }}>
                     ADOPTS PETS
                   </Text>
                 </View>

@@ -6,9 +6,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Entypo from 'react-native-vector-icons/Entypo';
 import iconNoti from "../resources/notificacionesIcono.png";
+import { useAuthContext } from '../context/AuthContext';
 
 const SideBar = ({ visible, onClose }) => {
   const [slideAnim] = useState(new Animated.Value(-300));
+  const { setIsAuthenticated } = useAuthContext()
   const [selectedButton, setSelectedButton] = useState('');
   const [userAuth, setUserAuth] = useState({});
   const navigation = useNavigation();
@@ -48,6 +50,7 @@ const SideBar = ({ visible, onClose }) => {
       await AsyncStorage.removeItem('token');
       Alert.alert("Cierre de Sesión", "Has cerrado sesión exitosamente.");
       navigation.navigate('FirstPage');
+      setIsAuthenticated(false)
       onClose();
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
