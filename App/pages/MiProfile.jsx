@@ -197,12 +197,12 @@ const styles = StyleSheet.create({
     additionalInfoRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginVertical: 4,
+        marginVertical: 3,
     },
     additionalInfoText: {
         fontSize: 16,
         color: "#333",
-        width: "48%",
+        width: "50%",
     },
     additionalInfoTextEmail: {
         fontSize: 16,

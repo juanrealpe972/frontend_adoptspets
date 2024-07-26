@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image, TouchableOpacity, View, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Feather from "react-native-vector-icons/Feather";
+import ListIcon from "../icons/ListIcon";
+import HouseIcon from "../icons/HouseIcon";
+import PersonIcon from "../icons/PersonIcon";
 
 import iconSub from '../resources/logo_adoptpets.jpg';
 import SideBar from "./SideBar";
-import PerfilPage from "../pages/PerfilPage";
 import Home from "../pages/Home";
 import MiProfile from "../pages/MiProfile";
 
@@ -27,13 +26,10 @@ const TabNavigationVen = () => {
           tabBarInactiveTintColor: 'grey',
           tabBarActiveBackgroundColor: 'rgba(22, 16, 0, 0.1)',
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
             if (route.name === 'ADOPTS PETS') {
-              iconName = 'house';
-              return <FontAwesome6 name={iconName} size={size} color={color} />;
+              return <HouseIcon size={size} color={color} />;
             } else if (route.name === 'Perfil') {
-              iconName = 'person-circle-sharp';
-              return <Ionicons name={iconName} size={size} color={color} />;
+              return <PersonIcon size={size} color={color} />;
             }
           },
         })}
@@ -49,7 +45,7 @@ const TabNavigationVen = () => {
             headerTitle: () => (
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
                 <TouchableOpacity onPress={() => setIsSideBarVisible(true)}>
-                  <Feather name="list" size={26} color="#FFF" />
+                  <ListIcon size={26} color="#FFF" />
                 </TouchableOpacity>
                 <View style={{ flex: 1, alignItems: 'center' }}>
                   <Text style={{ color:'#FFF', fontSize: 20, fontWeight: 'bold' }}>
@@ -73,7 +69,7 @@ const TabNavigationVen = () => {
           component={MiProfile}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name='person-circle-sharp' size={34} color={color} />
+              <PersonIcon size={34} color={color} />
             ),
             tabBarLabelStyle: { color: '#FFF' }, 
             headerTitle: 'Perfil', 

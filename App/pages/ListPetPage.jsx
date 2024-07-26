@@ -68,41 +68,41 @@ function ListPetPage() {
             ) : (
                 pet ? (
                     <View style={styles.petDetails}>
+                        <Text style={styles.petName}>{pet.nombre_mas}</Text>
                         <Image
                             source={{ uri: `${IP}/pets/${pet.imagen_pet}` }}
                             style={styles.petImage}
                             onError={() => console.log('Error cargando la imagen')}
                         />
                         <View>
-                            <Text style={styles.petName}>{pet.nombre_mas}</Text>
                             <View style={styles.infoSection}>
                                 <Text style={styles.infoTitle}>Datos básicos:</Text>
-                                <Text style={styles.infoText}>Edad: {pet.edad_mas} meses</Text>
-                                <Text style={styles.infoText}>Tamaño: {pet.tamano_mas} cm</Text>
-                                <Text style={styles.infoText}>Peso: {pet.peso_mas} kilos</Text>
-                                <Text style={styles.infoText}>Raza: {pet.nombre_raza}</Text>
-                                <Text style={styles.infoText}>Descripción: {pet.descripcion_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Edad:</Text> {pet.edad_mas} meses</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Tamaño:</Text> {pet.tamano_mas} cm</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Peso:</Text> {pet.peso_mas} kilos</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Raza:</Text> {pet.nombre_raza}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Descripción:</Text> {pet.descripcion_mas}</Text>
                             </View>
                             <View style={styles.infoSection}>
                                 <Text style={styles.infoTitle}>Historial médico:</Text>
-                                <Text style={styles.infoText}>Vacunación: {pet.vacunacion_mas}</Text>
-                                <Text style={styles.infoText}>Esterilización/Castración: {pet.esterilizacion_castracion_mas}</Text>
-                                <Text style={styles.infoText}>Enfermedades: {pet.enfermedades_mas}</Text>
-                                <Text style={styles.infoText}>Tratamientos: {pet.tratamientos_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Vacunación:</Text> {pet.vacunacion_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Esterilización/Castración:</Text> {pet.esterilizacion_castracion_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Enfermedades:</Text> {pet.enfermedades_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Tratamientos:</Text> {pet.tratamientos_mas}</Text>
                             </View>
                             <View style={styles.infoSection}>
                                 <Text style={styles.infoTitle}>Comportamiento y personalidad:</Text>
-                                <Text style={styles.infoText}>Nivel de energía: {pet.energia_mas} de 10</Text>
-                                <Text style={styles.infoText}>Compatibilidad con niños, otras mascotas: {pet.compatibilidad_mas}</Text>
-                                <Text style={styles.infoText}>Hábitos: {pet.habitos_mas}</Text>
-                                <Text style={styles.infoText}>Necesidades especiales: {pet.necesidades_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Nivel de energía:</Text> {pet.energia_mas} de 10</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Compatibilidad con niños, otras mascotas:</Text> {pet.compatibilidad_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Hábitos:</Text> {pet.habitos_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Necesidades especiales:</Text> {pet.necesidades_mas}</Text>
                             </View>
                             <View style={styles.infoSection}>
                                 <Text style={styles.infoTitle}>Historia de adopción:</Text>
-                                <Text style={styles.infoText}>Género: {pet.genero_mas}</Text>
-                                <Text style={styles.infoText}>Lugar de rescate: {pet.lugar_rescate_mas}</Text>
-                                <Text style={styles.infoText}>Condiciones en las que fue encontrado: {pet.condiciones_estado_mas}</Text>
-                                <Text style={styles.infoText}>Tiempo en el refugio o con el cuidador: {pet.tiempo_en_refugio_mas} meses</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Género:</Text> {pet.genero_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Lugar de rescate:</Text> {pet.lugar_rescate_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Condiciones en las que fue encontrado:</Text> {pet.condiciones_estado_mas}</Text>
+                                <Text style={styles.infoText}><Text style={styles.boldText}>Tiempo en el refugio o con el cuidador:</Text> {pet.tiempo_en_refugio_mas} meses</Text>
                                 {renderUpdateButton()}
                             </View>
                             {adoptVisible && (
@@ -127,14 +127,14 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         backgroundColor: '#fff',
         paddingHorizontal: 20,
-        paddingVertical: 25,
+        paddingBottom: 25
     },
     petDetails: {
         alignItems: 'center',
     },
     petImage: {
         width: '100%',
-        height: 300,
+        height: 400,
         borderRadius: 10,
     },
     petName: {
@@ -147,17 +147,19 @@ const styles = StyleSheet.create({
     infoSection: {
         width: '100%',
         marginTop: 20,
-        color:"black"
     },
     infoTitle: {
         fontSize: 22,
         fontWeight: 'bold',
-        color:"black"
+        color:"#a9a9a9"
     },
     infoText: {
         fontSize: 18,
         marginTop: 5,
         color:"black"
+    },
+    boldText: {
+        fontWeight: '700',
     },
     updateButton: {
         width: 180,

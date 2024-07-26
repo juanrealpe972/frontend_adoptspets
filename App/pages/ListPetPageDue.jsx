@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     infoText: {
         fontSize: 18,
         marginTop: 5,
+        color:"black"
     },
     contactSection: {
         width: '100%',

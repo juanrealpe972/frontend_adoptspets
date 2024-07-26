@@ -75,7 +75,6 @@ const PerfilPage = ({ route }) => {
           resizeMode="contain"
           style={styles.profileImage}
         />
-
         <Text style={styles.nameText}>{userData.nombre_user || "Nombre no disponible"}</Text>
         {renderUpdateButton()}
         <View style={styles.additionalInfoContainer}>

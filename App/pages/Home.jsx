@@ -7,10 +7,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import { IP } from '../api/IP';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import EnergyCircle from './EnergyCircle';
 
 function Home({ navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -20,7 +22,9 @@ function Home({ navigation }) {
   const getPetsAxios = async () => {
     try {
       const response = await axios.get(`${IP}/v1/petsactivos`);
-      setData(response.data.data);
+      // Filtrar las mascotas activas
+      const activePets = response.data.data.filter(pet => pet.estado === 'activo');
+      setData(activePets);
     } catch (error) {
       console.log('Error en el servidor: ', error);
     } finally {
@@ -83,6 +87,7 @@ function Home({ navigation }) {
                     <Image
                       source={{ uri: `${IP}/pets/${item.imagen_pet}` }}
                       style={styles.petImage}
+                      resizeMode="cover"
                     />
                   </View>
                   <View style={styles.petInfo}>
@@ -90,6 +95,7 @@ function Home({ navigation }) {
                       <Text style={styles.petName}>{item.nombre_mas}</Text>
                       <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
                     </View>
+                    <EnergyCircle energyLevel={item.energia_mas} />
                     <View style={styles.petDetailsRight}>
                       <Text style={styles.petCategory}>{item.nombre_cate}</Text>
                       <Text style={styles.petBreed}>{item.nombre_raza}</Text>
@@ -100,6 +106,7 @@ function Home({ navigation }) {
                   </TouchableOpacity>
                 </View>
               )}
+              contentContainerStyle={styles.flatListContent}
             />
           )}
         </>
@@ -134,14 +141,16 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    borderRadius: 10,
+    borderColor: "#ccc",
+    borderWidth: 0.4,
+    padding: 5,
   },
   petImage: {
-    width: '95%',
+    width: '50%', 
     height: 200,
     borderRadius: 10,
-    marginTop: 12,
-    borderColor: "#000",
-    borderWidth: 0.4,
   },
   petInfo: {
     flexDirection: 'row',
@@ -161,23 +170,22 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: 'black',
+    color: "black"
   },
   petLocation: {
     fontSize: 15,
     color: '#666',
     marginTop: 4,
-    color: 'black',
   },
   petCategory: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: 'black',
+    color: "black"
   },
   petBreed: {
     fontSize: 15,
     marginTop: 4,
-    color: 'black',
+    color: "#666"
   },
   adoptButton: {
     backgroundColor: '#E89551',
@@ -189,7 +197,7 @@ const styles = StyleSheet.create({
   },
   adoptButtonText: {
     color: '#001528',
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   registerPetsButton: {
@@ -198,10 +206,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: 'center',
     borderRadius: 5,
+    marginBottom: 10,
   },
   registerPetsButtonText: {
     color: 'white',
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   noPetsMessage: {
@@ -210,6 +219,9 @@ const styles = StyleSheet.create({
     color: '#E89551',
     textAlign: 'center',
     marginTop: 20,
+  },
+  flatListContent: {
+    paddingBottom: 50,
   },
 });
 

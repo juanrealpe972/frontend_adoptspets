@@ -3,14 +3,15 @@ import { Modal, View, StyleSheet, Animated, TouchableWithoutFeedback, Image, Tex
 import icono from '../resources/logo_adoptpets.jpg';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Entypo from 'react-native-vector-icons/Entypo';
-import iconNoti from "../resources/notificacionesIcono.png";
+import NewspaperIcon from "../icons/NewspaperIcon";
+import ToolsIcon from "../icons/ToolsIcon";
+import LogoutIcon from "../icons/LogoutIcon";
+import NotificacionesIcon from "../icons/NotificacionesIcon";
 import { useAuthContext } from '../context/AuthContext';
 
 const SideBar = ({ visible, onClose }) => {
   const [slideAnim] = useState(new Animated.Value(-300));
-  const { setIsAuthenticated } = useAuthContext()
+  const { setIsAuthenticated } = useAuthContext();
   const [selectedButton, setSelectedButton] = useState('');
   const [userAuth, setUserAuth] = useState({});
   const navigation = useNavigation();
@@ -50,7 +51,7 @@ const SideBar = ({ visible, onClose }) => {
       await AsyncStorage.removeItem('token');
       Alert.alert("Cierre de Sesión", "Has cerrado sesión exitosamente.");
       navigation.navigate('FirstPage');
-      setIsAuthenticated(false)
+      setIsAuthenticated(false);
       onClose();
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
@@ -94,7 +95,7 @@ const SideBar = ({ visible, onClose }) => {
                 style={buttonStyle('Terminos')}
                 onPress={() => handlePress('Terminos')}
               >
-                <Ionicons name="newspaper-outline" size={24} color={selectedButton === 'Terminos' ? 'white' : 'black'} style={styles.buttonIcon} />
+                <NewspaperIcon size={24} color={selectedButton === 'Terminos' ? 'white' : 'black'} style={styles.buttonIcon} />
                 <Text style={textStyle('Terminos')}>Terminos y Condiciones</Text>
               </TouchableOpacity>
               {userAuth.rol_user === 'admin' && (
@@ -102,7 +103,7 @@ const SideBar = ({ visible, onClose }) => {
                   style={buttonStyle('PetsAdopt')}
                   onPress={() => handlePress('PetsAdopt')}
                 >
-                  <Image source={iconNoti} style={styles.buttonIcon} />
+                  <NotificacionesIcon size={24} color={selectedButton === 'PetsAdopt' ? 'white' : 'black'} style={styles.buttonIcon} />
                   <Text style={textStyle('PetsAdopt')}>Mascotas por adoptar</Text>
                 </TouchableOpacity>
               )}
@@ -110,11 +111,11 @@ const SideBar = ({ visible, onClose }) => {
                 style={buttonStyle('Soporte')}
                 onPress={() => handlePress('Soporte')}
               >
-                <Entypo name="tools" size={24} color={selectedButton === 'Soporte' ? 'white' : 'black'} style={styles.buttonIcon} />
+                <ToolsIcon size={24} color={selectedButton === 'Soporte' ? 'white' : 'black'} style={styles.buttonIcon} />
                 <Text style={textStyle('Soporte')}>Soporte</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.button} onPress={handleLogout}>
-                <Ionicons name="log-out-outline" size={24} color="black" style={styles.buttonIcon} />
+                <LogoutIcon size={24} color="black" style={styles.buttonIcon} />
                 <Text style={styles.buttonText}>Cerrar Sesión</Text>
               </TouchableOpacity>
             </Animated.View>
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
   buttonIcon: {
     marginRight: 10,
     width: 24,
-    height: 24,
+    height: 24
   },
 });
 

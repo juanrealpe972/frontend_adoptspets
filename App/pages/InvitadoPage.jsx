@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { IP } from '../api/IP';
+import EnergyCircle from './EnergyCircle';
 
 function InvitadoPage({ navigation }) {
     const [isLoading, setLoading] = useState(true);
@@ -57,6 +58,7 @@ function InvitadoPage({ navigation }) {
                                     <Text style={styles.petName}>{item.nombre_mas}</Text>
                                     <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
                                 </View>
+                                <EnergyCircle energyLevel={item.energia_mas} /> 
                                 <View style={styles.petDetailsRight}>
                                     <Text style={styles.petCategory}>{item.nombre_cate}</Text>
                                     <Text style={styles.petBreed}>{item.nombre_raza}</Text>
@@ -97,17 +99,19 @@ const styles = StyleSheet.create({
         borderWidth: 0.4,
     },
     petViewImage: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f0f0f0",
+        borderRadius: 10,
+        borderColor: "#ccc",
+        borderWidth: 0.4,
+        padding: 5,
     },
     petImage: {
-        width: '95%',
+        width: '50%', 
         height: 200,
         borderRadius: 10,
-        marginTop: 12,
-        borderColor: '#000',
-        borderWidth: 0.4,
     },
     petInfo: {
         flexDirection: 'row',
@@ -142,7 +146,7 @@ const styles = StyleSheet.create({
     petBreed: {
         fontSize: 15,
         marginTop: 4,
-        color:"black"
+        color:"#666"
     },
     adoptButton: {
         backgroundColor: '#E89551',

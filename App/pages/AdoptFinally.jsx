@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomModal from '../components/modal/modal';
 import { IP } from '../api/IP';
-import axiosClient from '../api/axios';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
@@ -11,24 +10,39 @@ const AdoptFinally = ({ visible, onClose, IdPet }) => {
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation();
 
+    const getPetsAxios = async () => {
+        try {
+            const response = await axios.get(`${IP}/v1/petsactivos`);
+            setData(response.data.data);
+        } catch (error) {
+            console.log('Error en el servidor: ', error);
+        }
+    };
+
     const handleAdopt = async () => {
         setIsLoading(true);
         try {
-            const response = await axios.put(`${IP}/v1/petses/${id}`, {
-                adoptanteId: userData.pk_id_user
+            const jsonValue = await AsyncStorage.getItem('usuario');
+            const user = JSON.parse(jsonValue);
+            if (!user) {
+                throw new Error('Usuario no encontrado en AsyncStorage');
+            }
+            const userId = user.pk_id_user;
+            const response = await axios.put(`${IP}/v1/petses/${IdPet.pk_id_mas}`, {
+                adoptanteId: userId
             });
             console.log(response.data);
             if (response.status === 200) {
                 Alert.alert('Éxito', 'Se registró su petición exitosamente');
                 navigation.navigate('Visitante');
+                getPetsAxios()
             } else {
                 Alert.alert('Error', response.data.message || 'Error desconocido');
             }
         } catch (error) {
+            console.error('Error al intentar adoptar la mascota:', error.response ? error.response.data : error.message);
             Alert.alert('Error', 'Hubo un problema al intentar adoptar la mascota.');
-            console.error(error);
-        }
-        finally {
+        } finally {
             setIsLoading(false);
             onClose();
         }
@@ -89,6 +103,9 @@ const styles = StyleSheet.create({
     modalText: {
         fontSize: 16,
         marginBottom: 20,
+        color: "black",
+        paddingHorizontal: 10,
+        textAlign: "center"
     },
 });
 
