@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
-import { createUserApi, getMunicipiosForDepar, getPetsEsperaApi, getUserApi, updateUserApi } from '../api/auth.api';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { IP } from '../api/IP';
+import axiosClient from '../api/axios';
 
 const AuthContext = createContext();
 
@@ -20,10 +20,14 @@ export const AuthProvider = ({children}) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [idUser, setIdUser] = useState([]);
   const [departamentos, setDepartamentos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [razas, setRazas] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [loginUser, setLoginUser] = useState(false);
   const [userDate, setUserData] = useState([]);
-  const [petsEnEspera, setPetsEnEspera] = useState([])
+  const [petsEnEspera, setPetsEnEspera] = useState([]);
+
+  const [data, setData] = useState([]);
 
   const login = () => {
     setIsAuthenticated(true);
@@ -35,7 +39,7 @@ export const AuthProvider = ({children}) => {
 
   const getUser = async (id) => {
     try {
-      const response = await getUserApi(id)
+      const response = await axiosClient.get(`/v1/user/${id}`)
       setUserData(response.data)
     } catch (error) {
       console.log('error en el controlador', error);
@@ -51,9 +55,28 @@ export const AuthProvider = ({children}) => {
     }
   }
 
+  const getCategorias = async () => {
+    try {
+      const response = await axios.get(`${IP}/v1/categorias`)
+      setCategorias(response.data.data)
+    } catch (error) {
+      console.log('error en el controlador', error);
+    }
+  }
+
+  const getRazasForCategorias = async (id) => {
+    try {
+      const response = await axios.get(`${IP}/v1/razas_cate/${id}`)
+      setRazas(response.data.data)
+    } catch (error) {
+      console.log('error en el controlador', error);
+    }
+  }
+
+
   const getMascotasEnEspera = async () => {
     try {
-      const response = await getPetsEsperaApi()
+      const response = await axiosClient.get('/v1/petsespera')
       setPetsEnEspera(response.data.data)
     } catch (error) {
       console.log('error en el controlador', error);
@@ -62,7 +85,7 @@ export const AuthProvider = ({children}) => {
 
   const createUser = async (data) => {
     try {
-      const response = await createUserApi(data)
+      const response = await axiosClient.post(`/v1/users`, data)
       Alert.alert("Éxito", response.data.message);
       navigation.navigate('FirstPage');
     } catch (error) {
@@ -72,7 +95,7 @@ export const AuthProvider = ({children}) => {
 
   const updateUser = async (id, data) => {
     try {
-      const response = await updateUserApi(id, data)
+      const response = await axiosClient.put(`/v1/users/${id}`, data)
       Alert.alert("Éxito", response.data.message);
       navigation.navigate('Visitante');
     } catch (error) {
@@ -80,9 +103,18 @@ export const AuthProvider = ({children}) => {
     }
   }
 
+  const getPetsAxios = async () => {
+    try {
+      const response = await axios.get(`${IP}/v1/petsactivos`);
+      setData(response.data.data);
+    } catch (error) {
+      console.log('Error en el servidor: ', error);
+    }
+  };
+
   const getMunis = async (id) => {
     try {
-      const response = await getMunicipiosForDepar(id)
+      const response = await axiosClient.get(`/v1/muni_depar/${id}`)
       setMunicipios(response.data.data)
     } catch (error) {
       console.log('error en el controlador', error);
@@ -110,7 +142,18 @@ export const AuthProvider = ({children}) => {
         municipios,
         idUser,
         userDate,
-        setMunicipios
+        setMunicipios,
+        
+        getCategorias,
+        categorias, 
+        setCategorias,
+
+        getRazasForCategorias,
+        razas, 
+        setRazas,
+
+        data,
+        getPetsAxios
       }}
       >
       {children}

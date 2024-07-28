@@ -1,10 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity, Alert, Modal } from 'react-native';
 import axiosClient from '../api/axios';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import AdoptFinally from './AdoptFinally';
 import { IP } from '../api/IP';
+import WhatsAppIcon from '../icons/WhatsAppIcon';
+import axios from 'axios';
+
+const ConfirmationModal = ({ visible, message, onConfirm, onCancel }) => {
+    return (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={visible}
+            onRequestClose={onCancel}
+        >
+            <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalMessage}>{message}</Text>
+                    <View style={styles.modalButtons}>
+                        <TouchableOpacity style={styles.modalButton} onPress={onCancel}>
+                            <Text style={styles.modalButtonText}>Cancelar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton} onPress={onConfirm}>
+                            <Text style={styles.modalButtonText}>Confirmar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+};
 
 function ListPetPageDue() {
     const navigation = useNavigation();
@@ -12,8 +37,9 @@ function ListPetPageDue() {
     const { petIdWithDue } = route.params;
     const [isLoading, setLoading] = useState(true);
     const [pet, setPet] = useState(null);
-    const [userAuth, setUserAuth] = useState({});
-    const [adoptVisible, setAdoptVisible] = useState(false);
+    const [whatsAppMessage, setWhatsAppMessage] = useState('Estimado/a usuario/a, soy el administrador de la aplicación Adopts Pets. ¿Podría proporcionarme más información sobre usted, por favor?');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMode, setModalMode] = useState('');
 
     const getPetDetails = async () => {
         try {
@@ -39,28 +65,17 @@ function ListPetPageDue() {
     };
 
     useEffect(() => {
-        const getUser = async () => {
-            const jsonValue = await AsyncStorage.getItem('usuario');
-            const userData = JSON.parse(jsonValue);
-            if (userData) {
-                setUserAuth(userData);
-            }
-        };
-        getUser();
         getPetDetails();
     }, []);
 
     const handleCancelAdoption = async () => {
-        if (!pet) {
-            Alert.alert('Error', 'Detalles de la mascota no disponibles.');
-            return;
-        }
         setLoading(true);
+        setModalVisible(false);
         try {
-            const response = await axiosClient.put(`${IP}/v1/petsac/${pet.pk_id_mas}`);
+            const response = await axios.put(`${IP}/v1/petsac/${pet.pk_id_mas}`);
             if (response.status === 200) {
                 Alert.alert('Éxito', 'La adopción ha sido cancelada. La mascota está disponible nuevamente.');
-                navigation.navigate('PetDue');
+                navigation.navigate('PetsAdopt');
             } else {
                 Alert.alert('Error', response.data.message);
             }
@@ -71,18 +86,15 @@ function ListPetPageDue() {
             setLoading(false);
         }
     };
-    
+
     const handleGiveForAdoption = async () => {
-        if (!pet) {
-            Alert.alert('Error', 'Detalles de la mascota no disponibles.');
-            return;
-        }
         setLoading(true);
+        setModalVisible(false);
         try {
-            const response = await axiosClient.put(`${IP}/v1/petsdes/${pet.pk_id_mas}`);
+            const response = await axios.put(`${IP}/v1/petsdes/${pet.pk_id_mas}`);
             if (response.status === 200) {
                 Alert.alert('Éxito', 'La mascota se ha dado en adopción exitosamente.');
-                navigation.navigate('PetDue');
+                navigation.navigate('PetsAdopt');
             } else {
                 Alert.alert('Error', response.data.message);
             }
@@ -92,7 +104,12 @@ function ListPetPageDue() {
         } finally {
             setLoading(false);
         }
-    };    
+    };
+
+    const showModal = (mode) => {
+        setModalMode(mode);
+        setModalVisible(true);
+    };
 
     const perfilDeUsuario = async (id) => {
         try {
@@ -100,6 +117,13 @@ function ListPetPageDue() {
         } catch (error) {
             console.error('Perfil de usuario:', error);
         }
+    };
+
+    const handleWhatsApp = (phone) => {
+        let url = `whatsapp://send?text=${encodeURIComponent(whatsAppMessage)}&phone=${phone}`;
+        Linking.openURL(url).catch(() => {
+            Alert.alert('Error', 'Asegúrese de que WhatsApp esté instalado en su dispositivo.');
+        });
     };
 
     return (
@@ -149,45 +173,50 @@ function ListPetPageDue() {
                                 <Text style={styles.infoTitle}>Datos de contacto que desea adoptar la mascota:</Text>
                                 <Text style={styles.infoText}>Nombre: {pet.nombre_user}</Text>
                                 <Text style={styles.infoText}>Gmail: {pet.email_user}</Text>
-                                <TouchableOpacity style={styles.button} onPress={() => perfilDeUsuario(pet.pk_id_user)}>
+                                <TouchableOpacity style={styles.button} onPress={() => perfilDeUsuario(pet.fk_adoptante)}>
                                     <Text style={styles.buttonText}>Perfil de usuario</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={handleCancelAdoption}>
+                                <TouchableOpacity style={styles.button} onPress={() => showModal('cancel')}>
                                     <Text style={styles.buttonText}>Cancelar adopción</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={handleGiveForAdoption}>
+                                <TouchableOpacity style={styles.button} onPress={() => showModal('adopt')}>
                                     <Text style={styles.buttonText}>Dar en adopción la mascota</Text>
                                 </TouchableOpacity>
+                                <TouchableOpacity style={styles.whatsappButton} onPress={() => handleWhatsApp(pet.telefono_user)}>
+                                    <WhatsAppIcon size={20} color="white" />
+                                    <Text style={styles.buttonText}> Contactar por WhatsApp</Text>
+                                </TouchableOpacity>
                             </View>
-                            {adoptVisible && (
-                                <AdoptFinally
-                                    visible={true}
-                                    onClose={() => setAdoptVisible(false)}
-                                />
-                            )}
                         </View>
                     </View>
                 ) : (
-                    <Text style={styles.infoText}>No se encontraron detalles de la mascota.</Text>
+                    <Text style={styles.noPetText}>No se encontraron detalles de la mascota.</Text>
                 )
             )}
+            <ConfirmationModal
+                visible={modalVisible}
+                message={
+                    modalMode === 'cancel' ?
+                    '¿Estás seguro que deseas cancelar la adopción de esta mascota?' :
+                    '¿Estás seguro que deseas dar en adopción esta mascota?'
+                }
+                onConfirm={modalMode === 'cancel' ? handleCancelAdoption : handleGiveForAdoption}
+                onCancel={() => setModalVisible(false)}
+            />
         </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        backgroundColor: '#fff',
-        paddingHorizontal: 20,
-        paddingVertical: 25,
+        padding: 20,
     },
     petDetails: {
         alignItems: 'center',
     },
     petImage: {
         width: '100%',
-        height: 300,
+        height: 400,
         borderRadius: 10,
     },
     petName: {
@@ -195,6 +224,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 10,
         textAlign: "center",
+        color:"black"
     },
     infoSection: {
         width: '100%',
@@ -203,30 +233,76 @@ const styles = StyleSheet.create({
     infoTitle: {
         fontSize: 22,
         fontWeight: 'bold',
+        color:"#a9a9a9"
     },
     infoText: {
         fontSize: 18,
         marginTop: 5,
         color:"black"
     },
+    boldText: {
+        fontWeight: '700',
+    },
     contactSection: {
-        width: '100%',
-        alignItems: 'center',
         marginTop: 20,
     },
     button: {
-        width: 180,
-        height: 60,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#001528",
-        borderRadius: 10,
-        marginVertical: 10,
+        backgroundColor: '#E89551',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 10
     },
     buttonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    whatsappButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#001528',
+        padding: 10,
+        borderRadius: 5,
+        textAlign: "center",
+        justifyContent: "center",
+        marginTop: 10
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContainer: {
+        width: 300,
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalMessage: {
         fontSize: 18,
-        color: "white",
-        textAlign:"center"
+        textAlign: 'center',
+        marginBottom: 20,
+        color:"black"
+    },
+    modalButtons: {
+        flexDirection: 'row',
+    },
+    modalButton: {
+        backgroundColor: '#E89551',
+        padding: 10,
+        borderRadius: 5,
+        marginHorizontal: 10,
+    },
+    modalButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    noPetText: {
+        fontSize: 18,
+        textAlign: 'center',
+        marginTop: 20,
     },
 });
 

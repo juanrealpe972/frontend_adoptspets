@@ -9,7 +9,7 @@ const EnergyCircle = ({ energyLevel }) => {
 
     return (
         <View style={styles.container}>
-            <Svg height="40" width="40" viewBox="0 0 120 120">
+            <Svg height="25" width="25" viewBox="0 0 120 120">
                 <Circle
                     cx="60"
                     cy="60"
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     energyText: {
-        marginTop: 4,
+        marginTop: 2,
         fontSize: 13,
         color: '#666',
     },

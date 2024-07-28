@@ -1,36 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Image,
-  ScrollView,
 } from 'react-native';
-import axios from 'axios';
 import { IP } from '../api/IP';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EnergyCircle from './EnergyCircle';
+import { useAuthContext } from '../context/AuthContext';
 
 function Home({ navigation }) {
-  const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const { data, getPetsAxios } = useAuthContext()
   const [userRole, setUserRole] = useState('');
-
-  const getPetsAxios = async () => {
-    try {
-      const response = await axios.get(`${IP}/v1/petsactivos`);
-      // Filtrar las mascotas activas
-      const activePets = response.data.data.filter(pet => pet.estado === 'activo');
-      setData(activePets);
-    } catch (error) {
-      console.log('Error en el servidor: ', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     getPetsAxios();
@@ -70,47 +54,43 @@ function Home({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator style={{ marginTop: 20 }} />
-      ) : (
-        <>
-          {renderRegisterPetsButton()}
-          {data.length === 0 ? (
-            <Text style={styles.noPetsMessage}>No hay mascotas disponibles para adoptar en este momento.</Text>
-          ) : (
-            <FlatList
-              data={data}
-              keyExtractor={item => item.pk_id_mas.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.petCard}>
-                  <View style={styles.petViewImage}>
-                    <Image
-                      source={{ uri: `${IP}/pets/${item.imagen_pet}` }}
-                      style={styles.petImage}
-                      resizeMode="cover"
-                    />
-                  </View>
-                  <View style={styles.petInfo}>
-                    <View style={styles.petDetailsLeft}>
-                      <Text style={styles.petName}>{item.nombre_mas}</Text>
-                      <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
-                    </View>
-                    <EnergyCircle energyLevel={item.energia_mas} />
-                    <View style={styles.petDetailsRight}>
-                      <Text style={styles.petCategory}>{item.nombre_cate}</Text>
-                      <Text style={styles.petBreed}>{item.nombre_raza}</Text>
-                    </View>
-                  </View>
-                  <TouchableOpacity style={styles.adoptButton} onPress={() => handlePressAdoptar(item.pk_id_mas)}>
-                    <Text style={styles.adoptButtonText}>Visualizar</Text>
-                  </TouchableOpacity>
+      <>
+        {renderRegisterPetsButton()}
+        {data.length === 0 ? (
+          <Text style={styles.noPetsMessage}>No hay mascotas disponibles para adoptar en este momento.</Text>
+        ) : (
+          <FlatList
+            data={data}
+            keyExtractor={item => item.pk_id_mas.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.petCard}>
+                <View style={styles.petViewImage}>
+                  <Image
+                    source={{ uri: `${IP}/pets/${item.imagen_pet}` }}
+                    style={styles.petImage}
+                    resizeMode="cover"
+                  />
                 </View>
-              )}
-              contentContainerStyle={styles.flatListContent}
-            />
-          )}
-        </>
-      )}
+                <View style={styles.petInfo}>
+                  <View style={styles.petDetailsLeft}>
+                    <Text style={styles.petName}>{item.nombre_mas}</Text>
+                    <Text style={styles.petLocation}>{item.lugar_rescate_mas}</Text>
+                  </View>
+                  <EnergyCircle energyLevel={item.energia_mas} />
+                  <View style={styles.petDetailsRight}>
+                    <Text style={styles.petCategory}>{item.nombre_cate}</Text>
+                    <Text style={styles.petBreed}>{item.nombre_raza}</Text>
+                  </View>
+                </View>
+                <TouchableOpacity style={styles.adoptButton} onPress={() => handlePressAdoptar(item.pk_id_mas)}>
+                  <Text style={styles.adoptButtonText}>Visualizar</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            contentContainerStyle={styles.flatListContent}
+          />
+        )}
+      </>
     </View>
   );
 }
@@ -168,7 +148,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   petName: {
-    fontSize: 25,
+    fontSize: 15,
     fontWeight: 'bold',
     color: "black"
   },
@@ -178,7 +158,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   petCategory: {
-    fontSize: 25,
+    fontSize: 15,
     fontWeight: 'bold',
     color: "black"
   },

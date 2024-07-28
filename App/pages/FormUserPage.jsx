@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, ScrollView } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LinkBoton from '../components/atoms/button/linkboton';
 import { useAuthContext } from '../context/AuthContext';
 import axiosClient from '../api/axios';
 import axios from 'axios';
 import { IP } from '../api/IP';
 
-const FormUserPage = () => {
+const FormUserPage = ({ route }) => {
     const { getDeparts, departamentos, municipios, getMunis, setLoginUser, idUser, setMunicipios } = useAuthContext()
     const navigation = useNavigation()
-    const route = useRoute();
     const { mode } = route.params;
     const [formData, setFormData] = useState({
         pk_id_user: '',
@@ -87,40 +86,40 @@ const FormUserPage = () => {
     }
 
     const handleSubmit = async () => {
+        const { fk_categoria, ...resDatas } = formData;
+
+        // Validación de campos requeridos
+        const requiredFields = [
+            'pk_id_user',
+            'nombre_user',
+            'email_user',
+            'telefono_user',
+            'ubicacion_user',
+            'tipo_vivienda_user',
+            'espacio_dispo_user',
+            'canti_mas_hogar_user',
+            'horas_en_casa_user',
+            'experiencia_user',
+            'disponibilidad_user',
+            'economia_user',
+            'fk_id_municipio'
+        ];
+
+        for (let field of requiredFields) {
+            if (!resDatas[field]) {
+                Alert.alert("Error", `El campo ${field} es requerido`);
+                return;
+            }
+        }
+
         let data;
         if (mode === "create") {
             data = {
-                pk_id_user: formData.pk_id_user,
-                nombre_user: formData.nombre_user,
-                email_user: formData.email_user,
+                ...resDatas,
                 password_user: formData.password_user,
-                telefono_user: formData.telefono_user,
-                ubicacion_user: formData.ubicacion_user,
-                tipo_vivienda_user: formData.tipo_vivienda_user,
-                espacio_dispo_user: formData.espacio_dispo_user,
-                canti_mas_hogar_user: formData.canti_mas_hogar_user,
-                horas_en_casa_user: formData.horas_en_casa_user,
-                experiencia_user: formData.experiencia_user,
-                disponibilidad_user: formData.disponibilidad_user,
-                economia_user: formData.economia_user,
-                fk_id_municipio: formData.fk_id_municipio
             };
         } else if (mode === "update") {
-            data = {
-                pk_id_user: formData.pk_id_user,
-                nombre_user: formData.nombre_user,
-                email_user: formData.email_user,
-                telefono_user: formData.telefono_user,
-                ubicacion_user: formData.ubicacion_user,
-                tipo_vivienda_user: formData.tipo_vivienda_user,
-                espacio_dispo_user: formData.espacio_dispo_user,
-                canti_mas_hogar_user: formData.canti_mas_hogar_user,
-                horas_en_casa_user: formData.horas_en_casa_user,
-                experiencia_user: formData.experiencia_user,
-                disponibilidad_user: formData.disponibilidad_user,
-                economia_user: formData.economia_user,
-                fk_id_municipio: formData.fk_id_municipio,
-            };
+            data = resDatas;
         }
     
         try {
@@ -208,7 +207,6 @@ const FormUserPage = () => {
                     <Text style={styles.label}>Municipio:</Text>
                     <RNPickerSelect
                         style={pickerSelectStyles}
-                        borderWidth={2}
                         borderColor="#BFBFBF"
                         placeholder={{ label: 'Municipio...', value: null }}
                         value={formData.fk_id_municipio}
@@ -249,82 +247,79 @@ const FormUserPage = () => {
             <View style={styles.pickerContainer}>
                 <View style={styles.pickerItem}>
                     <Text style={styles.label}>Horas en casa:</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Horas en casa"
-                        placeholderTextColor="#BFBFBF"
+                    <RNPickerSelect
+                        style={pickerSelectStyles}
+                        placeholder={{ label: 'Horas en casa...', value: null }}
                         value={formData.horas_en_casa_user}
-                        onChangeText={(value) => handleInputChange('horas_en_casa_user', value)}
-                        keyboardType="numeric"
+                        onValueChange={(value) => handleInputChange('horas_en_casa_user', value)}
+                        items={[
+                            { label: 'Menos de 2 Horas', value: 'Menos de 2 Horas' },
+                            { label: 'Entre 2 a 4 Horas', value: 'Entre 2 a 4 Horas' },
+                            { label: 'Entre 4 a 6 Horas', value: 'Entre 4 a 6 Horas' },
+                            { label: 'Entre 6 a 8 Horas', value: 'Entre 6 a 8 Horas' },
+                            { label: 'Más de 8 Horas', value: 'Más de 8 Horas' },
+                        ]}
                     />
                 </View>
                 <View style={styles.pickerItem}>
                     <Text style={styles.label}>Espacio disponible:</Text>
                     <RNPickerSelect
                         style={pickerSelectStyles}
-                        placeholder={{ label: 'Espacio disponible...', value: null, }}
+                        placeholder={{ label: 'Espacio disponible...', value: null }}
                         value={formData.espacio_dispo_user}
                         onValueChange={(value) => handleInputChange('espacio_dispo_user', value)}
                         items={[
-                            { label: 'Jardin', value: 'Jardin' },
-                            { label: 'Patio', value: 'Patio' },
-                            { label: 'Terraza', value: 'Terraza' },
+                            { label: 'Pequeño', value: 'Pequeño' },
+                            { label: 'Mediano', value: 'Mediano' },
+                            { label: 'Grande', value: 'Grande' },
                         ]}
                     />
                 </View>
             </View>
-            <View style={styles.pickerItemFull}>
-                <Text style={styles.label}>Experiencia con mascotas:</Text>
-                <RNPickerSelect
-                    style={pickerSelectStyles}
-                    placeholder={{ label: 'Experiencia previa...', value: null, }}
-                    value={formData.experiencia_user}
-                    onValueChange={(value) => handleInputChange('experiencia_user', value)}
-                    items={[
-                        { label: 'Sí', value: 'Si' },
-                        { label: 'No', value: 'No' },
-                    ]}
-                />
-            </View>
-            <View style={styles.pickerItemFull}>
-                <Text style={styles.label}>Cantidad de mascotas en casa:</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Cantidad de mascotas en el hogar"
-                    placeholderTextColor="#BFBFBF"
-                    value={formData.canti_mas_hogar_user}
-                    onChangeText={(value) => handleInputChange('canti_mas_hogar_user', value)}
-                    keyboardType="numeric"
-                />
-            </View>
-            <View style={styles.pickerItemFull}>
-                <Text style={styles.label}>Horas disponibles para cuidar una mascota:</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Disponibilidad horas"
-                    placeholderTextColor="#BFBFBF"
-                    value={formData.disponibilidad_user}
-                    onChangeText={(value) => handleInputChange('disponibilidad_user', value)}
-                    keyboardType="numeric"
-                />
-            </View>
-            <View style={styles.pickerContainer}>
-                <View style={styles.pickerItem}>
-                    <Text style={styles.label}>Economia:</Text>
-                    <RNPickerSelect
-                        style={pickerSelectStyles}
-                        placeholder={{ label: 'Capacidad económica...', value: null, }}
-                        value={formData.economia_user}
-                        onValueChange={(value) => handleInputChange('economia_user', value)}
-                        items={[
-                            { label: 'Mala', value: 'Mala' },
-                            { label: 'Regular', value: 'Regular' },
-                            { label: 'Buena', value: 'Buena' },
-                            { label: 'Muy Buena', value: 'Muy Buena' },
-                        ]}
-                    />
-                </View>
-            </View>
+            <Text style={styles.label}>Disponibilidad:</Text>
+            <RNPickerSelect
+                style={pickerSelectStyles}
+                placeholder={{ label: 'Disponibilidad...', value: null }}
+                value={formData.disponibilidad_user}
+                onValueChange={(value) => handleInputChange('disponibilidad_user', value)}
+                items={[
+                    { label: 'Disponible', value: 'Disponible' },
+                    { label: 'No Disponible', value: 'No Disponible' },
+                ]}
+            />
+            <Text style={styles.label}>Cantidad de mascotas en el hogar:</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Cantidad de mascotas"
+                placeholderTextColor="#BFBFBF"
+                value={formData.canti_mas_hogar_user}
+                onChangeText={(value) => handleInputChange('canti_mas_hogar_user', value)}
+                keyboardType="number-pad"
+            />
+            <Text style={styles.label}>Experiencia con mascotas:</Text>
+            <RNPickerSelect
+                style={pickerSelectStyles}
+                placeholder={{ label: 'Experiencia...', value: null }}
+                value={formData.experiencia_user}
+                onValueChange={(value) => handleInputChange('experiencia_user', value)}
+                items={[
+                    { label: 'Principiante', value: 'Principiante' },
+                    { label: 'Intermedio', value: 'Intermedio' },
+                    { label: 'Experto', value: 'Experto' },
+                ]}
+            />
+            <Text style={styles.label}>Economía:</Text>
+            <RNPickerSelect
+                style={pickerSelectStyles}
+                placeholder={{ label: 'Economía...', value: null }}
+                value={formData.economia_user}
+                onValueChange={(value) => handleInputChange('economia_user', value)}
+                items={[
+                    { label: 'Bajo', value: 'Bajo' },
+                    { label: 'Medio', value: 'Medio' },
+                    { label: 'Alto', value: 'Alto' },
+                ]}
+            />
             <LinkBoton
                 press={handleSubmit}
                 text={mode === "create" ? "Registrarme" : "Actualizar"}

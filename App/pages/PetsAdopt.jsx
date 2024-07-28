@@ -12,7 +12,7 @@ import axios from 'axios';
 import { IP } from '../api/IP';
 import EnergyCircle from './EnergyCircle';
 
-function Home({ navigation }) {
+function PetsAdopt({ navigation }) {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
@@ -173,4 +173,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Home;
+export default PetsAdopt;
