@@ -99,13 +99,22 @@ const SideBar = ({ visible, onClose }) => {
                 <Text style={textStyle('Terminos')}>Terminos y Condiciones</Text>
               </TouchableOpacity>
               {userAuth.rol_user === 'admin' && (
-                <TouchableOpacity
-                  style={buttonStyle('PetsAdopt')}
-                  onPress={() => handlePress('PetsAdopt')}
-                >
-                  <NotificacionesIcon size={24} color={selectedButton === 'PetsAdopt' ? 'white' : 'black'} style={styles.buttonIcon} />
-                  <Text style={textStyle('PetsAdopt')}>Mascotas por adoptar</Text>
-                </TouchableOpacity>
+                <>
+                  <TouchableOpacity
+                    style={buttonStyle('PetsAdopt')}
+                    onPress={() => handlePress('PetsAdopt')}
+                  >
+                    <NotificacionesIcon size={24} color={selectedButton === 'PetsAdopt' ? 'white' : 'black'} style={styles.buttonIcon} />
+                    <Text style={textStyle('PetsAdopt')}>Mascotas por adoptar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={buttonStyle('PetInactivos')}
+                    onPress={() => handlePress('PetInactivos')}
+                  >
+                    <NotificacionesIcon size={24} color={selectedButton === 'PetInactivos' ? 'white' : 'black'} style={styles.buttonIcon} />
+                    <Text style={textStyle('PetInactivos')}>Mascotas adoptadas</Text>
+                  </TouchableOpacity>
+                </>
               )}
               <TouchableOpacity
                 style={buttonStyle('Soporte')}

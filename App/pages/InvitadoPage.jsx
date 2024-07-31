@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
     },
     petName: {
-        fontSize: 25,
+        fontSize: 15,
         fontWeight: 'bold',
         color:"black"
     },
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     petCategory: {
-        fontSize: 25,
+        fontSize: 15,
         fontWeight: 'bold',
         color:"black"
     },

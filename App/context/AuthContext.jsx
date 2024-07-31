@@ -26,8 +26,11 @@ export const AuthProvider = ({children}) => {
   const [loginUser, setLoginUser] = useState(false);
   const [userDate, setUserData] = useState([]);
   const [petsEnEspera, setPetsEnEspera] = useState([]);
+  const [petsInactivas, setPetsInactivas] = useState([]);
+  const [idPet, setIdPet] = useState([])
 
   const [data, setData] = useState([]);
+  const [dataEspera, setDataEspera] = useState([]);
 
   const login = () => {
     setIsAuthenticated(true);
@@ -73,11 +76,19 @@ export const AuthProvider = ({children}) => {
     }
   }
 
-
   const getMascotasEnEspera = async () => {
     try {
       const response = await axiosClient.get('/v1/petsespera')
       setPetsEnEspera(response.data.data)
+    } catch (error) {
+      console.log('error en el controlador', error);
+    }
+  }
+
+  const getMascotasInactivas = async () => {
+    try {
+      const response = await axiosClient.get('/v1/petsinactivos')
+      setPetsInactivas(response.data.data)
     } catch (error) {
       console.log('error en el controlador', error);
     }
@@ -112,6 +123,15 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const getPetsEspera = async () => {
+    try {
+        const response = await axios.get(`${IP}/v1/petsespera`);
+        setDataEspera(response.data.data);
+    } catch (error) {
+        console.log('Error en el servidor: ', error);
+    }
+  };
+
   const getMunis = async (id) => {
     try {
       const response = await axiosClient.get(`/v1/muni_depar/${id}`)
@@ -143,17 +163,22 @@ export const AuthProvider = ({children}) => {
         idUser,
         userDate,
         setMunicipios,
-        
         getCategorias,
         categorias, 
         setCategorias,
-
         getRazasForCategorias,
         razas, 
         setRazas,
-
         data,
-        getPetsAxios
+        getPetsAxios,
+        getPetsEspera,
+        dataEspera, 
+        setDataEspera,
+        idPet, 
+        setIdPet,
+
+        getMascotasInactivas,
+        petsInactivas
       }}
       >
       {children}

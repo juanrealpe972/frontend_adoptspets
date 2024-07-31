@@ -8,7 +8,6 @@ import FirstPage from "./App/pages/FirstPage.jsx";
 import TabNavigationVen from "./App/navigation/TabsNavigationVen.jsx";
 import SideBar from "./App/navigation/SideBar.jsx";
 import ForgotPassword from "./App/pages/Recuperar-Password.jsx";
-import Notificaciones from "./App/pages/Notificaciones.jsx";
 import TerminosyCondiciones from "./App/pages/TerminosyCondiciones.jsx";
 import Soporte from "./App/pages/Soporte.jsx";
 import LoginPage from "./App/pages/LoginPage.jsx";
@@ -20,6 +19,7 @@ import FormPet from "./App/pages/FormPet.jsx";
 import PetsAdopt from "./App/pages/PetsAdopt.jsx";
 import PerfilPage from "./App/pages/PerfilPage.jsx";
 import ListPetPageDue from "./App/pages/ListPetPageDue.jsx";
+import ListPageInactivos from "./App/pages/ListPageInactivos.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -77,17 +77,6 @@ const App = () => {
                   }}
                 /> 
                 <Stack.Screen
-                  name="Notificaciones"
-                  component={Notificaciones}
-                  options={{
-                    title:'Notificaciones',
-                    headerStyle: {
-                      backgroundColor: '#E89551', 
-                    },
-                      headerTintColor: 'white', 
-                  }}
-                /> 
-                <Stack.Screen
                   name="Terminos"
                   component={TerminosyCondiciones}
                   options={{
@@ -114,6 +103,17 @@ const App = () => {
                   component={ListPetPageDue}
                   options={{
                     title:'Mascota por adoptar',
+                    headerStyle: {
+                      backgroundColor: '#E89551', 
+                    },
+                      headerTintColor: 'white', 
+                  }}
+                /> 
+                <Stack.Screen
+                  name="PetInactivos"
+                  component={ListPageInactivos}
+                  options={{
+                    title:'Mascotas adoptadas',
                     headerStyle: {
                       backgroundColor: '#E89551', 
                     },

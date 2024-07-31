@@ -40,16 +40,6 @@ const PerfilPage = ({ route }) => {
               <Text style={styles.additionalInfoValue}> {userData.telefono_user || "Teléfono no disponible"}</Text>
             </Text>
             <Text style={styles.additionalInfoText}>
-              <Text style={styles.additionalInfoLabel}>Tipo de vivienda:</Text>
-              <Text style={styles.additionalInfoValue}> {userData.tipo_vivienda_user || "Vivienda no disponibles"}</Text>
-            </Text>
-          </View>
-          <View style={styles.additionalInfoRow}>
-            <Text style={styles.additionalInfoText}>
-              <Text style={styles.additionalInfoLabel}>Ubicación:</Text>
-              <Text style={styles.additionalInfoValue}> {userData.ubicacion_user || "Ubicación no disponible"}</Text>
-            </Text>
-            <Text style={styles.additionalInfoText}>
               <Text style={styles.additionalInfoLabel}>Horas en casa:</Text>
               <Text style={styles.additionalInfoValue}> {userData.horas_en_casa_user || "Horas no disponibles"}</Text>
             </Text>
@@ -90,12 +80,22 @@ const PerfilPage = ({ route }) => {
           </View>
           <View style={styles.additionalInfoRow}>
             <Text style={styles.additionalInfoText}>
+              <Text style={styles.additionalInfoLabel}>Departamento:</Text>
+              <Text style={styles.additionalInfoValue}> {userData.nombre_depar || "Nombre departamento no disponible"}</Text>
+            </Text>
+            <Text style={styles.additionalInfoText}>
               <Text style={styles.additionalInfoLabel}>Municipio:</Text>
               <Text style={styles.additionalInfoValue}> {userData.nombre_muni || "Municipio no disponible"}</Text>
             </Text>
+          </View>
+          <View style={styles.additionalInfoRow}>
             <Text style={styles.additionalInfoText}>
-              <Text style={styles.additionalInfoLabel}>Departamento:</Text>
-              <Text style={styles.additionalInfoValue}> {userData.nombre_depar || "Nombre departamento no disponible"}</Text>
+              <Text style={styles.additionalInfoLabel}>Ubicación:</Text>
+              <Text style={styles.additionalInfoValue}> {userData.ubicacion_user || "Ubicación no disponible"}</Text>
+            </Text>
+            <Text style={styles.additionalInfoText}>
+              <Text style={styles.additionalInfoLabel}>Tipo de vivienda:</Text>
+              <Text style={styles.additionalInfoValue}> {userData.tipo_vivienda_user || "Vivienda no disponibles"}</Text>
             </Text>
           </View>
         </View>

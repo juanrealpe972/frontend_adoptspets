@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { IP } from "../api/IP";
 import { useAuthContext } from "../context/AuthContext";
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const MiProfile = () => {
     const [userData, setUserData] = useState({});
@@ -18,30 +18,29 @@ const MiProfile = () => {
         navigation.navigate('Registro', { mode: "update" });
     };
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                let userId;
-                const jsonValue = await AsyncStorage.getItem('usuario');
-                if (jsonValue !== null) {
-                    const res = JSON.parse(jsonValue);
-                    userId = res.pk_id_user;
-                    setCurrentUser(res);
-                } else {
-                    console.log('No se encontraron datos de usuario en AsyncStorage');
-                    return;
-                }
-
-                const response = await axios.get(`${IP}/v1/user/${userId}`);
-                if (response.data && response.data.data.length > 0) {
-                    setUserData(response.data.data[0]);
-                }
-            } catch (e) {
-                console.error("Error fetching user data:", e);
+    const fetchUserData = async () => {
+        try {
+            const user = await JSON.parse(await AsyncStorage.getItem('usuario'));
+            if (user !== null) {
+                setCurrentUser(user);
+            } else {
+                console.log('No se encontraron datos de usuario en AsyncStorage');
+                return;
             }
-        };
-        fetchUserData();
-    }, []);
+            const response = await axios.get(`${IP}/v1/user/${user.pk_id_user}`);
+            if (response.data && response.data.data.length > 0) {
+                setUserData(response.data.data[0]);
+            }
+        } catch (e) {
+            console.error("Error fetching user data:", e);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchUserData();
+        }, [])
+    );
 
     const renderUpdateButton = () => {
         if (userData.pk_id_user === currentUser.pk_id_user) {
@@ -71,16 +70,6 @@ const MiProfile = () => {
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Teléfono:</Text>
                             <Text style={styles.additionalInfoValue}> {userData.telefono_user || "Teléfono no disponible"}</Text>
-                        </Text>
-                        <Text style={styles.additionalInfoText}>
-                            <Text style={styles.additionalInfoLabel}>Tipo de vivienda:</Text>
-                            <Text style={styles.additionalInfoValue}> {userData.tipo_vivienda_user || "Vivienda no disponibles"}</Text>
-                        </Text>
-                    </View>
-                    <View style={styles.additionalInfoRow}>
-                        <Text style={styles.additionalInfoText}>
-                            <Text style={styles.additionalInfoLabel}>Ubicación:</Text>
-                            <Text style={styles.additionalInfoValue}> {userData.ubicacion_user || "Ubicación no disponible"}</Text>
                         </Text>
                         <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Horas en casa:</Text>
@@ -123,12 +112,22 @@ const MiProfile = () => {
                     </View>
                     <View style={styles.additionalInfoRow}>
                         <Text style={styles.additionalInfoText}>
+                            <Text style={styles.additionalInfoLabel}>Departamento:</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.nombre_depar || "Nombre departamento no disponible"}</Text>
+                        </Text>
+                        <Text style={styles.additionalInfoText}>
                             <Text style={styles.additionalInfoLabel}>Municipio:</Text>
                             <Text style={styles.additionalInfoValue}> {userData.nombre_muni || "Municipio no disponible"}</Text>
                         </Text>
+                    </View>
+                    <View style={styles.additionalInfoRow}>
                         <Text style={styles.additionalInfoText}>
-                            <Text style={styles.additionalInfoLabel}>Departamento:</Text>
-                            <Text style={styles.additionalInfoValue}> {userData.nombre_depar || "Nombre departamento no disponible"}</Text>
+                            <Text style={styles.additionalInfoLabel}>Ubicación:</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.ubicacion_user || "Ubicación no disponible"}</Text>
+                        </Text>
+                        <Text style={styles.additionalInfoText}>
+                            <Text style={styles.additionalInfoLabel}>Tipo de vivienda:</Text>
+                            <Text style={styles.additionalInfoValue}> {userData.tipo_vivienda_user || "Vivienda no disponibles"}</Text>
                         </Text>
                     </View>
                 </View>

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useEffect } from 'react';
 import {
     FlatList,
     View,
@@ -10,16 +10,13 @@ import {
 import { IP } from '../api/IP';
 import EnergyCircle from './EnergyCircle';
 import { useAuthContext } from '../context/AuthContext';
-import { useFocusEffect } from '@react-navigation/native';
 
-function PetsAdopt({ navigation }) {
-    const { getPetsEspera, dataEspera } = useAuthContext()
+function ListPageInactivos({ navigation }) {
+    const { getMascotasInactivas, petsInactivas } = useAuthContext()
 
-    useFocusEffect(
-        useCallback(() => {
-            getPetsEspera();
-        }, [])
-    );
+    useEffect(() => {
+        getMascotasInactivas();
+    }, []);
 
     const handlePressAdoptar = id => {
         navigation.navigate('PetDue', { petIdWithDue: id });
@@ -27,11 +24,11 @@ function PetsAdopt({ navigation }) {
 
     return (
         <View style={styles.container}>
-            {dataEspera.length === 0 ? (
+            {petsInactivas.length === 0 ? (
                 <Text style={styles.noPetsMessage}>No hay mascotas en espera en este momento.</Text>
             ) : (
                 <FlatList
-                    data={dataEspera}
+                    data={petsInactivas}
                     keyExtractor={item => item.pk_id_mas.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.petCard}>
@@ -159,4 +156,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PetsAdopt;
+export default ListPageInactivos;

@@ -5,9 +5,11 @@ const Error = ({error}) => {
     if (!error){
         return null;
     }
-    return <Text testID="errorBox" style={styles.error}>
-        Error: {error}
-    </Text>
+    return (
+        <Text testID="errorBox" style={styles.error}>
+            Error: {error}
+        </Text>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -15,4 +17,5 @@ const styles = StyleSheet.create({
         color:"red"
     }
 })
+
 export default Error;

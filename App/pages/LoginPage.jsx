@@ -21,7 +21,6 @@ import { useAuthContext } from '../context/AuthContext';
 const LoginPage = ({visible, onClose}) => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [loginSuccess, setLoginSuccess] = useState(false);
   const { setIsAuthenticated } = useAuthContext();
   const [formData, setFormData] = useState({
     correo: '',
@@ -79,7 +78,6 @@ const LoginPage = ({visible, onClose}) => {
         if (token && user) {
           await AsyncStorage.setItem('token', token);
           await AsyncStorage.setItem('usuario', JSON.stringify(user));
-          setLoginSuccess(true);
           setIsLoading(false);
           setIsAuthenticated(true);
           navigation.navigate('Visitante');
@@ -114,7 +112,6 @@ const LoginPage = ({visible, onClose}) => {
     }
   };
 
-  if (!loginSuccess) {}
   return (
     <View style={{flex: 1}}>
       <CustomModal visible={visible} onClose={onClose}>

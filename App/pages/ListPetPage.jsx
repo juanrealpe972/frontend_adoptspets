@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView } from 'react-native';
 import axiosClient from '../api/axios';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthContext } from '../context/AuthContext';
-import LinkBoton from '../components/atoms/button/linkboton';
+import LinkBoton from '../components/atoms/LinkBoton';
 import AdoptFinally from './AdoptFinally';
 import { IP } from '../api/IP';
 
 function ListPetPage() {
     const route = useRoute();
     const { petId } = route.params;
-    const [isLoading, setLoading] = useState(true);
+    const navigation = useNavigation();
     const [pet, setPet] = useState(null);
     const [userAuth, setUserAuth] = useState({});
-    const { isAuthenticated } = useAuthContext();
+    const [isLoading, setLoading] = useState(true);
+    const { setIdPet } = useAuthContext();
     const [adoptVisible, setAdoptVisible] = useState(false);
 
     const getPetDetails = async () => {
@@ -41,21 +42,43 @@ function ListPetPage() {
     };
 
     useEffect(() => {
-        const getUser = async () => {
-            const jsonValue = await AsyncStorage.getItem('usuario');
-            const userData = JSON.parse(jsonValue);
-            if (userData) {
-                setUserAuth(userData);
-            }
-        };
-        getUser();
         getPetDetails();
     }, []);
+    
+    const getUser = async () => {
+        const user = JSON.parse(await AsyncStorage.getItem('usuario'));
+        if (user) {
+            setUserAuth(user);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            getUser();
+        }, [])
+    );
 
     const renderUpdateButton = () => {
-        if (isAuthenticated && userAuth.rol_user !== "admin") {
+        if (userAuth.rol_user !== "admin") {
             return (
                 <LinkBoton press={() => setAdoptVisible(true)} text={'Adoptar Mascota'} />
+            );
+        }
+        return null;
+    };
+
+    const ahoraIniciar = (data) => {
+        setIdPet(data);
+        navigation.navigate('FormMascota', { mode: "update" });
+    };
+
+    const renderUpdateButtonPet = () => {
+        if (userAuth.rol_user === "admin") {
+            return (
+                <LinkBoton 
+                    press={() => ahoraIniciar(pet)} 
+                    text={'Actualizar Mascota'} 
+                />
             );
         }
         return null;
@@ -104,6 +127,7 @@ function ListPetPage() {
                                 <Text style={styles.infoText}><Text style={styles.boldText}>Condiciones en las que fue encontrado:</Text> {pet.condiciones_estado_mas}</Text>
                                 <Text style={styles.infoText}><Text style={styles.boldText}>Tiempo en el refugio o con el cuidador:</Text> {pet.tiempo_en_refugio_mas} meses</Text>
                                 {renderUpdateButton()}
+                                {renderUpdateButtonPet()}
                             </View>
                             {adoptVisible && (
                                 <AdoptFinally

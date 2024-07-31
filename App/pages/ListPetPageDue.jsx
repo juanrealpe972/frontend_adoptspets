@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity, Alert, Modal, Linking } from 'react-native';
 import axiosClient from '../api/axios';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { IP } from '../api/IP';
 import WhatsAppIcon from '../icons/WhatsAppIcon';
 import axios from 'axios';
+import { useAuthContext } from '../context/AuthContext';
 
 const ConfirmationModal = ({ visible, message, onConfirm, onCancel }) => {
     return (
@@ -34,10 +35,11 @@ const ConfirmationModal = ({ visible, message, onConfirm, onCancel }) => {
 function ListPetPageDue() {
     const navigation = useNavigation();
     const route = useRoute();
+    const { getPetsEspera, getPetsAxios } = useAuthContext();
     const { petIdWithDue } = route.params;
     const [isLoading, setLoading] = useState(true);
     const [pet, setPet] = useState(null);
-    const [whatsAppMessage, setWhatsAppMessage] = useState('Estimado/a usuario/a, soy el administrador de la aplicación Adopts Pets. ¿Podría proporcionarme más información sobre usted, por favor?');
+    const [whatsAppMessage, setWhatsAppMessage] = useState('Estimado/a usuario/a, soy el administrador de la aplicación Adopts Pets. Y necesito realizarle una serie de preguntas');
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMode, setModalMode] = useState('');
 
@@ -76,6 +78,7 @@ function ListPetPageDue() {
             if (response.status === 200) {
                 Alert.alert('Éxito', 'La adopción ha sido cancelada. La mascota está disponible nuevamente.');
                 navigation.navigate('PetsAdopt');
+                getPetsEspera();
             } else {
                 Alert.alert('Error', response.data.message);
             }
@@ -95,6 +98,8 @@ function ListPetPageDue() {
             if (response.status === 200) {
                 Alert.alert('Éxito', 'La mascota se ha dado en adopción exitosamente.');
                 navigation.navigate('PetsAdopt');
+                getPetsEspera();
+                getPetsAxios()
             } else {
                 Alert.alert('Error', response.data.message);
             }
@@ -176,12 +181,18 @@ function ListPetPageDue() {
                                 <TouchableOpacity style={styles.button} onPress={() => perfilDeUsuario(pet.fk_adoptante)}>
                                     <Text style={styles.buttonText}>Perfil de usuario</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={() => showModal('cancel')}>
-                                    <Text style={styles.buttonText}>Cancelar adopción</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={() => showModal('adopt')}>
-                                    <Text style={styles.buttonText}>Dar en adopción la mascota</Text>
-                                </TouchableOpacity>
+                                {
+                                    pet.estado_mas === "espera" && (
+                                        <>
+                                            <TouchableOpacity style={styles.button} onPress={() => showModal('cancel')}>
+                                                <Text style={styles.buttonText}>Cancelar adopción</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={styles.button} onPress={() => showModal('adopt')}>
+                                                <Text style={styles.buttonText}>Dar en adopción la mascota</Text>
+                                            </TouchableOpacity>
+                                        </>
+                                    )
+                                }
                                 <TouchableOpacity style={styles.whatsappButton} onPress={() => handleWhatsApp(pet.telefono_user)}>
                                     <WhatsAppIcon size={20} color="white" />
                                     <Text style={styles.buttonText}> Contactar por WhatsApp</Text>

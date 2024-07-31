@@ -5,19 +5,12 @@ import CustomModal from '../components/modal/modal';
 import { IP } from '../api/IP';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { useAuthContext } from '../context/AuthContext';
 
 const AdoptFinally = ({ visible, onClose, IdPet }) => {
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation();
-
-    const getPetsAxios = async () => {
-        try {
-            const response = await axios.get(`${IP}/v1/petsactivos`);
-            setData(response.data.data);
-        } catch (error) {
-            console.log('Error en el servidor: ', error);
-        }
-    };
+    const { getPetsAxios } = useAuthContext();
 
     const handleAdopt = async () => {
         setIsLoading(true);
