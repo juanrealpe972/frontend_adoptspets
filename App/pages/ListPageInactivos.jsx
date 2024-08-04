@@ -8,7 +8,7 @@ import {
     Image,
 } from 'react-native';
 import { IP } from '../api/IP';
-import EnergyCircle from './EnergyCircle';
+import EnergyCircle from '../components/atoms/EnergyCircle';
 import { useAuthContext } from '../context/AuthContext';
 
 function ListPageInactivos({ navigation }) {
@@ -25,7 +25,7 @@ function ListPageInactivos({ navigation }) {
     return (
         <View style={styles.container}>
             {petsInactivas.length === 0 ? (
-                <Text style={styles.noPetsMessage}>No hay mascotas en espera en este momento.</Text>
+                <Text style={styles.noPetsMessage}>No hay mascotas adoptadas en este momento.</Text>
             ) : (
                 <FlatList
                     data={petsInactivas}
@@ -49,6 +49,7 @@ function ListPageInactivos({ navigation }) {
                                     <Text style={styles.petBreed}>{item.nombre_raza}</Text>
                                 </View>
                             </View>
+                            <Text style={styles.petBreed}> Fecha de adopción: {item.fecha_adop_mas ? item.fecha_adop_mas : ''}</Text>
                             <TouchableOpacity
                                 style={styles.adoptButton}
                                 onPress={() => handlePressAdoptar(item.pk_id_mas)}

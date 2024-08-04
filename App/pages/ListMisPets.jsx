@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useEffect } from 'react';
 import {
     FlatList,
     View,
@@ -10,28 +10,37 @@ import {
 import { IP } from '../api/IP';
 import EnergyCircle from '../components/atoms/EnergyCircle';
 import { useAuthContext } from '../context/AuthContext';
-import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function PetsAdopt({ navigation }) {
-    const { getPetsEspera, dataEspera } = useAuthContext()
+function ListMisPets({ navigation }) {
+    const { getMisPets, misPets } = useAuthContext()
 
-    useFocusEffect(
-        useCallback(() => {
-            getPetsEspera();
-        }, [])
-    );
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const user = await AsyncStorage.getItem('usuario');
+                if (user) {
+                    const parsedUser = JSON.parse(user);
+                    getMisPets(parsedUser.pk_id_user);
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+        fetchUserData();
+    }, [getMisPets]);
 
     const handlePressAdoptar = id => {
-        navigation.navigate('PetDue', { petIdWithDue: id });
+        navigation.navigate('Pet', { petId: id });
     };
 
     return (
         <View style={styles.container}>
-            {dataEspera.length === 0 ? (
-                <Text style={styles.noPetsMessage}>No hay mascotas en espera en este momento.</Text>
+            {misPets.length === 0 ? (
+                <Text style={styles.noPetsMessage}>No he adoptado o no tengo mascotas por adoptar.</Text>
             ) : (
                 <FlatList
-                    data={dataEspera}
+                    data={misPets}
                     keyExtractor={item => item.pk_id_mas.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.petCard}>
@@ -160,4 +169,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PetsAdopt;
+export default ListMisPets;

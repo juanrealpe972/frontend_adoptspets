@@ -116,6 +116,17 @@ const SideBar = ({ visible, onClose }) => {
                   </TouchableOpacity>
                 </>
               )}
+              {
+                userAuth.rol_user !== 'admin' && (
+                  <TouchableOpacity
+                    style={buttonStyle('ListMisPets')}
+                    onPress={() => handlePress('ListMisPets')}
+                  >
+                    <NotificacionesIcon size={24} color={selectedButton === 'ListMisPets' ? 'white' : 'black'} style={styles.buttonIcon} />
+                    <Text style={textStyle('ListMisPets')}>Mascotas adoptadas</Text>
+                  </TouchableOpacity>
+                )
+              }
               <TouchableOpacity
                 style={buttonStyle('Soporte')}
                 onPress={() => handlePress('Soporte')}

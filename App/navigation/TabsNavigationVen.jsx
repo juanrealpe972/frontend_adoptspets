@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image, TouchableOpacity, View, Text } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import ListIcon from "../icons/ListIcon";
 import HouseIcon from "../icons/HouseIcon";
 import PersonIcon from "../icons/PersonIcon";
@@ -14,7 +13,6 @@ import MiProfile from "../pages/MiProfile";
 const Tab = createBottomTabNavigator();
 
 const TabNavigationVen = () => {
-  const navigation = useNavigation();
   const [isSideBarVisible, setIsSideBarVisible] = useState(false);
 
   return (

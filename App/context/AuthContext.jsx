@@ -27,7 +27,9 @@ export const AuthProvider = ({children}) => {
   const [userDate, setUserData] = useState([]);
   const [petsEnEspera, setPetsEnEspera] = useState([]);
   const [petsInactivas, setPetsInactivas] = useState([]);
-  const [idPet, setIdPet] = useState([])
+  const [idPet, setIdPet] = useState([]);
+
+  const [misPets, setMisPets] = useState([])
 
   const [data, setData] = useState([]);
   const [dataEspera, setDataEspera] = useState([]);
@@ -71,6 +73,15 @@ export const AuthProvider = ({children}) => {
     try {
       const response = await axios.get(`${IP}/v1/razas_cate/${id}`)
       setRazas(response.data.data)
+    } catch (error) {
+      console.log('error en el controlador', error);
+    }
+  }
+
+  const getMisPets = async (id) => {
+    try {
+      const response = await axios.get(`${IP}/v1/mispets/${id}`)
+      setMisPets(response.data.data)
     } catch (error) {
       console.log('error en el controlador', error);
     }
@@ -178,7 +189,10 @@ export const AuthProvider = ({children}) => {
         setIdPet,
 
         getMascotasInactivas,
-        petsInactivas
+        petsInactivas,
+
+        getMisPets,
+        misPets
       }}
       >
       {children}

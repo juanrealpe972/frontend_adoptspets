@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { IP } from '../api/IP';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import EnergyCircle from './EnergyCircle';
+import EnergyCircle from '../components/atoms/EnergyCircle';
 import { useAuthContext } from '../context/AuthContext';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 

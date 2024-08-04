@@ -12,14 +12,6 @@ const Soporte = () => {
       <Text style={styles.description}>
         Bienvenido al centro de soporte de nuestra aplicación de adopción de mascotas. Aquí podrás encontrar ayuda para resolver cualquier problema que puedas tener.
       </Text>
-      {/* <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Preguntas Frecuentes</Text>
-        <Text style={styles.sectionText}>
-          - ¿Cómo puedo adoptar una mascota?{'\n'}
-          - ¿Cómo puedo registrar una mascota?{'\n'}
-          - ¿Cómo puedo actualizar mis datos de usuario?{'\n'}
-        </Text>
-      </View> */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Contacto</Text>
         <Text style={styles.sectionText}>

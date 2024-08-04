@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { IP } from '../api/IP';
-import EnergyCircle from './EnergyCircle';
+import EnergyCircle from '../components/atoms/EnergyCircle';
 
 function InvitadoPage({ navigation }) {
     const [isLoading, setLoading] = useState(true);

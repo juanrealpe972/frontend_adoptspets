@@ -5,8 +5,8 @@ import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/nativ
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthContext } from '../context/AuthContext';
 import LinkBoton from '../components/atoms/LinkBoton';
-import AdoptFinally from './AdoptFinally';
 import { IP } from '../api/IP';
+import ModalAdoptFinally from '../components/modal/ModalAdoptFinally';
 
 function ListPetPage() {
     const route = useRoute();
@@ -15,7 +15,7 @@ function ListPetPage() {
     const [pet, setPet] = useState(null);
     const [userAuth, setUserAuth] = useState({});
     const [isLoading, setLoading] = useState(true);
-    const { setIdPet } = useAuthContext();
+    const { setIdPet, isAuthenticated } = useAuthContext();
     const [adoptVisible, setAdoptVisible] = useState(false);
 
     const getPetDetails = async () => {
@@ -126,11 +126,15 @@ function ListPetPage() {
                                 <Text style={styles.infoText}><Text style={styles.boldText}>Lugar de rescate:</Text> {pet.lugar_rescate_mas}</Text>
                                 <Text style={styles.infoText}><Text style={styles.boldText}>Condiciones en las que fue encontrado:</Text> {pet.condiciones_estado_mas}</Text>
                                 <Text style={styles.infoText}><Text style={styles.boldText}>Tiempo en el refugio o con el cuidador:</Text> {pet.tiempo_en_refugio_mas} meses</Text>
-                                {renderUpdateButton()}
+                                {
+                                    pet.estado_mas === "activo" && (
+                                        renderUpdateButton()
+                                    )
+                                }
                                 {renderUpdateButtonPet()}
                             </View>
                             {adoptVisible && (
-                                <AdoptFinally
+                                <ModalAdoptFinally
                                     visible={true}
                                     onClose={() => setAdoptVisible(false)}
                                     IdPet={pet}
