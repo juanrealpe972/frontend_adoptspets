@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   FlatList,
   View,
@@ -9,16 +9,28 @@ import {
 } from 'react-native';
 import { IP } from '../api/IP';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import EnergyCircle from './EnergyCircle';
-import { useAuthContext } from '../context/AuthContext';
+import EnergyCircle from '../components/atoms/EnergyCircle';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
-function Home({ navigation }) {
-  const { data, getPetsAxios } = useAuthContext()
+function Home() {
   const [userRole, setUserRole] = useState('');
+  const navigation = useNavigation();
+  const [data, setData] = useState([]);
 
-  useEffect(() => {
-    getPetsAxios();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getPetsAxios = async () => {
+        try {
+          const response = await axios.get(`${IP}/v1/petsactivos`);
+          setData(response.data.data);
+        } catch (error) {
+          console.log('Error en el servidor: ', error);
+        }
+      };
+      getPetsAxios();
+    }, [])
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -44,7 +56,10 @@ function Home({ navigation }) {
   const renderRegisterPetsButton = () => {
     if (userRole === "admin") {
       return (
-        <TouchableOpacity style={styles.registerPetsButton} onPress={() => navigation.navigate('FormMascota')}>
+        <TouchableOpacity
+          style={styles.registerPetsButton}
+          onPress={() => navigation.navigate('FormMascota', { mode: 'create' })}
+        >
           <Text style={styles.registerPetsButtonText}>Registrar Mascotas</Text>
         </TouchableOpacity>
       );

@@ -8,9 +8,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {useNavigation} from '@react-navigation/native';
-import NetInfo from '@react-native-community/netinfo';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -21,7 +20,6 @@ import { useAuthContext } from '../context/AuthContext';
 const LoginPage = ({visible, onClose}) => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [loginSuccess, setLoginSuccess] = useState(false);
   const { setIsAuthenticated } = useAuthContext();
   const [formData, setFormData] = useState({
     correo: '',
@@ -32,45 +30,8 @@ const LoginPage = ({visible, onClose}) => {
     setFormData({...formData, [name]: value});
   };
 
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      console.log('Tipo de conexión', state.type);
-      console.log('¿Está conectado?', state.isConnected);
-      if (!state.isConnected) {
-        Alert.alert(
-          'Sin conexión',
-          'Por favor, verifica tu conexión a internet.',
-        );
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   const Validacion = async () => {
     setIsLoading(true);
-
-    const connectionInfo = await NetInfo.fetch();
-    if (!connectionInfo.isConnected) {
-      Alert.alert('Sin conexión', 'Por favor, verifica tu conexión a internet');
-      setIsLoading(false);
-      return;
-    }
-    if (!formData.correo || !formData.password) {
-      Alert.alert('Campos vacíos', 'Por favor, complete todos los campos');
-      setIsLoading(false);
-      return;
-    }
-    if (!formData.correo.includes('@')) {
-      Alert.alert(
-        'Correo inválido',
-        'Por favor, ingrese un correo electrónico válido',
-      );
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const baseURL = `${IP}/auth/login`;
       const response = await axios.post(baseURL, formData);
@@ -79,7 +40,6 @@ const LoginPage = ({visible, onClose}) => {
         if (token && user) {
           await AsyncStorage.setItem('token', token);
           await AsyncStorage.setItem('usuario', JSON.stringify(user));
-          setLoginSuccess(true);
           setIsLoading(false);
           setIsAuthenticated(true);
           navigation.navigate('Visitante');
@@ -92,29 +52,11 @@ const LoginPage = ({visible, onClose}) => {
       }
     } catch (error) {
       console.error('Error al iniciar sesión:', error.message);
+      Alert.alert('500', 'Error de conexión');
       setIsLoading(false);
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        console.log(error.request);
-      } else {
-        console.log('Error', error.message);
-      }
-      console.log(error.config);
-
-      if (error.response && error.response.status === 400) {
-        Alert.alert('Usuario no registrado en adopt pets principal');
-        setIsLoading(false);
-      } else {
-        Alert.alert('404', 'Usuario no registrado 3.1');
-        setIsLoading(false);
-      }
     }
   };
 
-  if (!loginSuccess) {}
   return (
     <View style={{flex: 1}}>
       <CustomModal visible={visible} onClose={onClose}>

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { IP } from '../api/IP';
-import EnergyCircle from './EnergyCircle';
+import EnergyCircle from '../components/atoms/EnergyCircle';
 
 function InvitadoPage({ navigation }) {
     const [isLoading, setLoading] = useState(true);
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
     },
     petName: {
-        fontSize: 25,
+        fontSize: 15,
         fontWeight: 'bold',
         color:"black"
     },
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     petCategory: {
-        fontSize: 25,
+        fontSize: 15,
         fontWeight: 'bold',
         color:"black"
     },

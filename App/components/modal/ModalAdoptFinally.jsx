@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet, ActivityIndicator, Modal, Button, Alert } from 'react-native';
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomModal from '../components/modal/modal';
-import { IP } from '../api/IP';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import { useAuthContext } from '../context/AuthContext';
+import CustomModal from './modal';
+import { useAuthContext } from '../../context/AuthContext';
+import { IP } from '../../api/IP';
 
-const AdoptFinally = ({ visible, onClose, IdPet }) => {
+const ModalAdoptFinally = ({ visible, onClose, IdPet }) => {
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation();
     const { getPetsAxios } = useAuthContext();
@@ -102,4 +102,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AdoptFinally;
+export default ModalAdoptFinally;

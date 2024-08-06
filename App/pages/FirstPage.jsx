@@ -1,46 +1,52 @@
-import React, { useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, Alert, Text, Image } from 'react-native';
+import React, { useCallback } from 'react';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { View, StyleSheet, Text, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { useAuthContext } from '../context/AuthContext';
-import LinkBoton from '../components/atoms/button/linkboton';
-import checkConnectivity from '../components/error/errorHandler';
-import { Typography } from '../components/atoms/Typography/textGlobal';
 import LoginPage from './LoginPage';
+import LinkBoton from '../components/atoms/LinkBoton';
+import { useAuthContext } from '../context/AuthContext';
 
 export default function FirstPage() {
-  const { setLoginUser, loginUser } = useAuthContext()
-  const navigation = useNavigation()
+  const { modalLogin, setModalLogin } = useAuthContext();
+  const navigation = useNavigation();
 
-  useEffect(() => {
-    const onConnected = () => console.log('conectado a internet');
-    const onDisconnected = () => {
-      Alert.alert('Sin Conexion', 'Conectese a internet nuevamente');
-      console.log('sin conexion');
-    };
-    const unsubscribe = checkConnectivity(onConnected, onDisconnected);
-    return () => unsubscribe();
-  }, []);
+  const checkUserAndToken = useCallback(async () => {
+    const token = await AsyncStorage.getItem('token');
+    const user = await AsyncStorage.getItem('usuario');
+
+    if (token && user) {
+      navigation.navigate("Visitante");
+    } else {
+      setModalLogin(false);
+    }
+  }, [navigation, setModalLogin]);
+
+  useFocusEffect(
+    useCallback(() => {
+      checkUserAndToken();
+    }, [checkUserAndToken])
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={[Typography.subtitle, styles.title]}>
+        <Text style={styles.title}>
           ADOPTS PETS
         </Text>
         <Image
           source={require('../resources/logo_adoptpets.jpg')}
           style={styles.logo}
         />
-        <Text style={[Typography.subtitle, styles.customSubtitle]}>
+        <Text style={styles.customSubtitle}>
           Adopts Pets una aplicación para que puedas adoptar la mascota de tu gusto de manera fácil y rápida.
         </Text>
         <View style={styles.footer}>
-          <LinkBoton press={() => setLoginUser(true)} text={'Iniciar Sesión'} />
-          {loginUser && (
+          <LinkBoton press={() => setModalLogin(true)} text={'Iniciar Sesión'} />
+          {modalLogin && (
             <LoginPage
               visible={true}
-              onClose={() => setLoginUser(false)}
+              onClose={() => setModalLogin(false)}
             />
           )}
         </View>
@@ -52,7 +58,7 @@ export default function FirstPage() {
         </View>
       </View>
     </View>
-  );  
+  );
 }
 
 const styles = StyleSheet.create({
@@ -65,6 +71,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 55,
     paddingHorizontal: 20,
+    fontWeight: '700',
   },
   content: {
     flex: 1,
@@ -77,6 +84,8 @@ const styles = StyleSheet.create({
     marginBottom: '85%',
     textAlign: 'center',
     paddingHorizontal: 20,
+    fontSize: 20,
+    fontWeight: '500',
   },
   footer: {
     position: 'absolute',

@@ -9,7 +9,6 @@ function checkConnectivity(onConnect, onDisconnect) {
             onDisconnect();
         }
     });
-
     return unsubscribe;
 }
 export default checkConnectivity;

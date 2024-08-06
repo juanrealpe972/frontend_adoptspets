@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
     FlatList,
     View,
@@ -9,25 +9,14 @@ import {
 } from 'react-native';
 import { IP } from '../api/IP';
 import EnergyCircle from '../components/atoms/EnergyCircle';
-import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';
+import { useAuthContext } from '../context/AuthContext';
 
-function PetsAdopt({ navigation }) {
-    const [dataEspera, setDataEspera] = useState([]);
+function ListPageInactivos({ navigation }) {
+    const { getMascotasInactivas, petsInactivas } = useAuthContext()
 
-    useFocusEffect(
-        useCallback(() => {
-            const getPetsEspera = async () => {
-                try {
-                    const response = await axios.get(`${IP}/v1/petsespera`);
-                    setDataEspera(response.data.data);
-                } catch (error) {
-                    console.log('Error en el servidor: ', error);
-                }
-            };
-            getPetsEspera();
-        }, [])
-    );
+    useEffect(() => {
+        getMascotasInactivas();
+    }, []);
 
     const handlePressAdoptar = id => {
         navigation.navigate('PetDue', { petIdWithDue: id });
@@ -35,11 +24,11 @@ function PetsAdopt({ navigation }) {
 
     return (
         <View style={styles.container}>
-            {dataEspera.length === 0 ? (
-                <Text style={styles.noPetsMessage}>No hay mascotas en espera en este momento.</Text>
+            {petsInactivas.length === 0 ? (
+                <Text style={styles.noPetsMessage}>No hay mascotas adoptadas en este momento.</Text>
             ) : (
                 <FlatList
-                    data={dataEspera}
+                    data={petsInactivas}
                     keyExtractor={item => item.pk_id_mas.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.petCard}>
@@ -168,4 +157,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PetsAdopt;
+export default ListPageInactivos;

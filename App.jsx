@@ -2,24 +2,24 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { AuthProvider } from "./App/context/AuthContext";
 
 import SplashScreen from "./splashScreen";
 import FirstPage from "./App/pages/FirstPage.jsx";
 import TabNavigationVen from "./App/navigation/TabsNavigationVen.jsx";
 import SideBar from "./App/navigation/SideBar.jsx";
-import ForgotPassword from "./App/pages/Recuperar-Password.jsx";
-import Notificaciones from "./App/pages/Notificaciones.jsx";
 import TerminosyCondiciones from "./App/pages/TerminosyCondiciones.jsx";
 import Soporte from "./App/pages/Soporte.jsx";
 import LoginPage from "./App/pages/LoginPage.jsx";
 import InvitadoPage from "./App/pages/InvitadoPage.jsx";
 import ListPetPage from "./App/pages/ListPetPage.jsx";
-import { AuthProvider } from "./App/context/AuthContext";
 import FormUserPage from "./App/pages/FormUserPage.jsx";
 import FormPet from "./App/pages/FormPet.jsx";
 import PetsAdopt from "./App/pages/PetsAdopt.jsx";
 import PerfilPage from "./App/pages/PerfilPage.jsx";
 import ListPetPageDue from "./App/pages/ListPetPageDue.jsx";
+import ListPageInactivos from "./App/pages/ListPageInactivos.jsx";
+import ListMisPets from "./App/pages/ListMisPets.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +31,7 @@ const App = () => {
       setIsShowSplash(false);
     }, 2000);
   }, []);
+  
   return(
     <>
       <NavigationContainer>
@@ -66,28 +67,6 @@ const App = () => {
                   }}
                 />
                 <Stack.Screen
-                  name="Recuperar-Password"
-                  component={ForgotPassword}
-                  options={{
-                    title:'Recuperar Contraseña',
-                    headerStyle: {
-                      backgroundColor: '#E89551', 
-                    },
-                      headerTintColor: 'white', 
-                  }}
-                /> 
-                <Stack.Screen
-                  name="Notificaciones"
-                  component={Notificaciones}
-                  options={{
-                    title:'Notificaciones',
-                    headerStyle: {
-                      backgroundColor: '#E89551', 
-                    },
-                      headerTintColor: 'white', 
-                  }}
-                /> 
-                <Stack.Screen
                   name="Terminos"
                   component={TerminosyCondiciones}
                   options={{
@@ -114,6 +93,28 @@ const App = () => {
                   component={ListPetPageDue}
                   options={{
                     title:'Mascota por adoptar',
+                    headerStyle: {
+                      backgroundColor: '#E89551', 
+                    },
+                      headerTintColor: 'white', 
+                  }}
+                /> 
+                <Stack.Screen
+                  name="PetInactivos"
+                  component={ListPageInactivos}
+                  options={{
+                    title:'Mascotas adoptadas',
+                    headerStyle: {
+                      backgroundColor: '#E89551', 
+                    },
+                      headerTintColor: 'white', 
+                  }}
+                /> 
+                <Stack.Screen
+                  name="ListMisPets"
+                  component={ListMisPets}
+                  options={{
+                    title:'Mis Mascotas adoptadas',
                     headerStyle: {
                       backgroundColor: '#E89551', 
                     },

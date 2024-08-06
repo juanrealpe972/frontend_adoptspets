@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
     FlatList,
     View,
@@ -9,37 +9,49 @@ import {
 } from 'react-native';
 import { IP } from '../api/IP';
 import EnergyCircle from '../components/atoms/EnergyCircle';
-import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';
+import { useAuthContext } from '../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function PetsAdopt({ navigation }) {
-    const [dataEspera, setDataEspera] = useState([]);
+function ListMisPets({ navigation }) {
+    const { getMisPets, misPets } = useAuthContext();
 
-    useFocusEffect(
-        useCallback(() => {
-            const getPetsEspera = async () => {
-                try {
-                    const response = await axios.get(`${IP}/v1/petsespera`);
-                    setDataEspera(response.data.data);
-                } catch (error) {
-                    console.log('Error en el servidor: ', error);
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const user = await AsyncStorage.getItem('usuario');
+                if (user) {
+                    const parsedUser = JSON.parse(user);
+                    getMisPets(parsedUser.pk_id_user);
                 }
-            };
-            getPetsEspera();
-        }, [])
-    );
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+        fetchUserData();
+    }, [getMisPets]);
 
     const handlePressAdoptar = id => {
-        navigation.navigate('PetDue', { petIdWithDue: id });
+        navigation.navigate('Pet', { petId: id });
+    };
+
+    const getStatusStyle = (estado) => {
+        switch (estado) {
+            case 'en espera':
+                return styles.statusWaiting;
+            case 'inactivo':
+                return styles.statusInactive;
+            default:
+                return styles.statusDefault;
+        }
     };
 
     return (
         <View style={styles.container}>
-            {dataEspera.length === 0 ? (
-                <Text style={styles.noPetsMessage}>No hay mascotas en espera en este momento.</Text>
+            {misPets.length === 0 ? (
+                <Text style={styles.noPetsMessage}>No he adoptado o no tengo mascotas por adoptar.</Text>
             ) : (
                 <FlatList
-                    data={dataEspera}
+                    data={misPets}
                     keyExtractor={item => item.pk_id_mas.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.petCard}>
@@ -60,7 +72,14 @@ function PetsAdopt({ navigation }) {
                                     <Text style={styles.petBreed}>{item.nombre_raza}</Text>
                                 </View>
                             </View>
-                            <Text style={styles.petBreed}> Fecha de adopción: {item.fecha_adop_mas ? item.fecha_adop_mas : ''}</Text>
+                            <View style={styles.adoptionInfo}>
+                                <Text style={styles.petBreed}>
+                                    Fecha de adopción: {item.fecha_adop_mas ? item.fecha_adop_mas : ''}
+                                </Text>
+                                <Text style={[styles.petStatus, getStatusStyle(item.estado_mas)]}>
+                                    {item.estado_mas}
+                                </Text>
+                            </View>
                             <TouchableOpacity
                                 style={styles.adoptButton}
                                 onPress={() => handlePressAdoptar(item.pk_id_mas)}
@@ -108,7 +127,7 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     petImage: {
-        width: '50%', 
+        width: '50%',
         height: 200,
         borderRadius: 10,
     },
@@ -130,7 +149,7 @@ const styles = StyleSheet.create({
     petName: {
         fontSize: 15,
         fontWeight: 'bold',
-        color:"black"
+        color: "black"
     },
     petLocation: {
         fontSize: 15,
@@ -140,12 +159,12 @@ const styles = StyleSheet.create({
     petCategory: {
         fontSize: 15,
         fontWeight: 'bold',
-        color:"black"
+        color: "black"
     },
     petBreed: {
         fontSize: 15,
         marginTop: 4,
-        color:"black"
+        color: "black"
     },
     adoptButton: {
         backgroundColor: '#E89551',
@@ -166,6 +185,26 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 20,
     },
+    petStatus: {
+        fontSize: 15,
+        marginLeft: 10,
+        fontWeight: 'bold',
+    },
+    statusWaiting: {
+        color: 'blue',
+    },
+    statusInactive: {
+        color: 'red',
+    },
+    statusDefault: {
+        color: 'black',
+    },
+    adoptionInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+        marginLeft: 20,
+    },
 });
 
-export default PetsAdopt;
+export default ListMisPets;

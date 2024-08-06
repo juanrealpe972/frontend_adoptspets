@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Alert, Modal, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Alert, Modal, ActivityIndicator, TextInput, TouchableOpacityBase } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import NetInfo from '@react-native-community/netinfo';
 
-import Input from "../components/atoms/inputs/Inputs";
-import LinkBoton from "../components/atoms/button/linkboton";
 import { IP } from "../context/ip";
 
 const ForgotPassword = () => {
@@ -73,13 +71,13 @@ const ForgotPassword = () => {
       <Text style={styles.explicacion}>
         Por favor, ingrese su correo electrónico y presione "Enviar" para solicitar un cambio de contraseña. Se enviará un código de verificación a su correo electrónico registrado.
       </Text>
-      <Input
+      <TextInput
         placeholder="Correo Electrónico"
         value={formData.correo}
         onChangeText={(value) => handleInputChange('correo', value)}
         keyboardType="email-address"
       />
-      <LinkBoton press={handlePress} text="Enviar" styles={styles.boton} />
+      <TouchableOpacityBase press={handlePress} text="Enviar" styles={styles.boton} />
       <Modal
         transparent={true}
         animationType="fade"
