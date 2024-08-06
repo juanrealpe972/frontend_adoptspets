@@ -45,11 +45,7 @@ function ListPetPageDue() {
             const response = await axios.put(`${IP}/v1/petsac/${pet.pk_id_mas}`);
             if (response.status === 200) {
                 Alert.alert('Éxito', 'La adopción ha sido cancelada. La mascota está disponible nuevamente.');
-<<<<<<< HEAD
                 navigation.navigate('Visitante');
-=======
-                navigation.navigate('PetsAdopt');
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
                 getPetsEspera();
             } else {
                 Alert.alert('Error', response.data.message);
@@ -69,11 +65,7 @@ function ListPetPageDue() {
             const response = await axios.put(`${IP}/v1/petsdes/${pet.pk_id_mas}`);
             if (response.status === 200) {
                 Alert.alert('Éxito', 'La mascota se ha dado en adopción exitosamente.');
-<<<<<<< HEAD
                 navigation.navigate('Visitante');
-=======
-                navigation.navigate('PetsAdopt');
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
                 getPetsEspera();
                 getPetsAxios();
             } else {

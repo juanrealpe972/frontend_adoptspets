@@ -43,10 +43,7 @@ const RegisterPetForm = ({ route }) => {
         const fetchData = async () => {
             try {
                 if (mode === 'update' && idPet) {
-<<<<<<< HEAD
                     console.log(idPet);
-=======
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
                     setFormData({
                         nombre_mas: idPet.nombre_mas,
                         edad_mas: String(idPet.edad_mas),
@@ -130,20 +127,14 @@ const RegisterPetForm = ({ route }) => {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-<<<<<<< HEAD
                 getPetsAxios()
-=======
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
             } else {
                 response = await axiosClient.post(`/v1/pets`, dataToSend, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-<<<<<<< HEAD
                 getPetsAxios()
-=======
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
             }
 
             console.log('Response:', response);
@@ -371,11 +362,7 @@ const RegisterPetForm = ({ route }) => {
                     source={{ uri: formData.imagen_pet.uri }}
                     style={styles.image}
                     onError={() => console.log('Error cargando la imagen')}
-<<<<<<< HEAD
                 />  
-=======
-                />
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
             ) : (
                 <Text>No image selected</Text>
             )}

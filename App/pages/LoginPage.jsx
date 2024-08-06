@@ -32,10 +32,6 @@ const LoginPage = ({visible, onClose}) => {
 
   const Validacion = async () => {
     setIsLoading(true);
-<<<<<<< HEAD
-=======
-
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
     try {
       const baseURL = `${IP}/auth/login`;
       const response = await axios.post(baseURL, formData);

@@ -9,11 +9,7 @@ import { IP } from '../api/IP';
 import LinkBoton from '../components/atoms/LinkBoton';
 
 const FormUserPage = ({ route }) => {
-<<<<<<< HEAD
     const { getDeparts, departamentos, municipios, getMunis, setModalLogin, idUser, setMunicipios } = useAuthContext()
-=======
-    const { getDeparts, departamentos, municipios, getMunis, setLoginUser, idUser, setMunicipios, getUser } = useAuthContext()
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
     const navigation = useNavigation()
     const { mode } = route.params;
     const [formData, setFormData] = useState({

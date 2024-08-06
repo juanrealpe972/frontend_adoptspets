@@ -13,11 +13,7 @@ import { useAuthContext } from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ListMisPets({ navigation }) {
-<<<<<<< HEAD
     const { getMisPets, misPets } = useAuthContext();
-=======
-    const { getMisPets, misPets } = useAuthContext()
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -38,7 +34,6 @@ function ListMisPets({ navigation }) {
         navigation.navigate('Pet', { petId: id });
     };
 
-<<<<<<< HEAD
     const getStatusStyle = (estado) => {
         switch (estado) {
             case 'en espera':
@@ -50,8 +45,6 @@ function ListMisPets({ navigation }) {
         }
     };
 
-=======
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
     return (
         <View style={styles.container}>
             {misPets.length === 0 ? (
@@ -79,7 +72,6 @@ function ListMisPets({ navigation }) {
                                     <Text style={styles.petBreed}>{item.nombre_raza}</Text>
                                 </View>
                             </View>
-<<<<<<< HEAD
                             <View style={styles.adoptionInfo}>
                                 <Text style={styles.petBreed}>
                                     Fecha de adopción: {item.fecha_adop_mas ? item.fecha_adop_mas : ''}
@@ -88,9 +80,6 @@ function ListMisPets({ navigation }) {
                                     {item.estado_mas}
                                 </Text>
                             </View>
-=======
-                            <Text style={styles.petBreed}> Fecha de adopción: {item.fecha_adop_mas ? item.fecha_adop_mas : ''}</Text>
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
                             <TouchableOpacity
                                 style={styles.adoptButton}
                                 onPress={() => handlePressAdoptar(item.pk_id_mas)}
@@ -138,11 +127,7 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     petImage: {
-<<<<<<< HEAD
         width: '50%',
-=======
-        width: '50%', 
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
         height: 200,
         borderRadius: 10,
     },
@@ -164,11 +149,7 @@ const styles = StyleSheet.create({
     petName: {
         fontSize: 15,
         fontWeight: 'bold',
-<<<<<<< HEAD
         color: "black"
-=======
-        color:"black"
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
     },
     petLocation: {
         fontSize: 15,
@@ -178,20 +159,12 @@ const styles = StyleSheet.create({
     petCategory: {
         fontSize: 15,
         fontWeight: 'bold',
-<<<<<<< HEAD
         color: "black"
-=======
-        color:"black"
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
     },
     petBreed: {
         fontSize: 15,
         marginTop: 4,
-<<<<<<< HEAD
         color: "black"
-=======
-        color:"black"
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
     },
     adoptButton: {
         backgroundColor: '#E89551',
@@ -212,7 +185,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 20,
     },
-<<<<<<< HEAD
     petStatus: {
         fontSize: 15,
         marginLeft: 10,
@@ -233,8 +205,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginLeft: 20,
     },
-=======
->>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
 });
 
 export default ListMisPets;
