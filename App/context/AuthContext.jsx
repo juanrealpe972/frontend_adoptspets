@@ -32,8 +32,11 @@ export const AuthProvider = ({children}) => {
 
   const [data, setData] = useState([]);
   const [dataEspera, setDataEspera] = useState([]);
+<<<<<<< HEAD
 
   const [modalLogin, setModalLogin] = useState(false);
+=======
+>>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
 
   const login = () => {
     setIsAuthenticated(true);
@@ -186,12 +189,21 @@ export const AuthProvider = ({children}) => {
         setDataEspera,
         idPet, 
         setIdPet,
+<<<<<<< HEAD
         getMascotasInactivas,
         petsInactivas,
         getMisPets,
         misPets,
         modalLogin, 
         setModalLogin
+=======
+
+        getMascotasInactivas,
+        petsInactivas,
+
+        getMisPets,
+        misPets
+>>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
       }}
       >
       {children}

@@ -59,7 +59,11 @@ function ListPetPage() {
     );
 
     const renderUpdateButton = () => {
+<<<<<<< HEAD
         if (userAuth.rol_user !== "admin" && isAuthenticated) {
+=======
+        if (userAuth.rol_user !== "admin") {
+>>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
             return (
                 <LinkBoton press={() => setAdoptVisible(true)} text={'Adoptar Mascota'} />
             );
@@ -73,7 +77,11 @@ function ListPetPage() {
     };
 
     const renderUpdateButtonPet = () => {
+<<<<<<< HEAD
         if (userAuth.rol_user === "admin" && isAuthenticated) {
+=======
+        if (userAuth.rol_user === "admin") {
+>>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
             return (
                 <LinkBoton 
                     press={() => ahoraIniciar(pet)} 

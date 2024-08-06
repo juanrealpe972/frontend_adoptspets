@@ -26,6 +26,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [isShowSplash, setIsShowSplash] = useState(true);
 
+
   useEffect(() => {
     setTimeout(() => {
       setIsShowSplash(false);

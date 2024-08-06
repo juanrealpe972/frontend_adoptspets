@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useCallback } from 'react';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet, Text, Image } from 'react-native';
@@ -27,6 +28,33 @@ export default function FirstPage() {
       checkUserAndToken();
     }, [checkUserAndToken])
   );
+=======
+import React, { useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { View, StyleSheet, Text, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { useAuthContext } from '../context/AuthContext';
+import LoginPage from './LoginPage';
+import LinkBoton from '../components/atoms/LinkBoton';
+
+export default function FirstPage() {
+  const { setLoginUser, loginUser } = useAuthContext();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const checkUserAndToken = async () => {
+      const token = await AsyncStorage.getItem('token');
+      const user = await AsyncStorage.getItem('usuario');
+
+      if (token && user) {
+        navigation.navigate("Visitante");
+      }
+    };
+
+    checkUserAndToken();
+  }, []);
+>>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
 
   return (
     <View style={styles.container}>

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useCallback, useState } from 'react';
+=======
+import React, { useCallback } from 'react';
+>>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
 import {
     FlatList,
     View,
@@ -9,6 +13,7 @@ import {
 } from 'react-native';
 import { IP } from '../api/IP';
 import EnergyCircle from '../components/atoms/EnergyCircle';
+<<<<<<< HEAD
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 
@@ -25,6 +30,16 @@ function PetsAdopt({ navigation }) {
                     console.log('Error en el servidor: ', error);
                 }
             };
+=======
+import { useAuthContext } from '../context/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
+
+function PetsAdopt({ navigation }) {
+    const { getPetsEspera, dataEspera } = useAuthContext()
+
+    useFocusEffect(
+        useCallback(() => {
+>>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
             getPetsEspera();
         }, [])
     );

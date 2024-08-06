@@ -10,6 +10,7 @@ import {
 import { IP } from '../api/IP';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EnergyCircle from '../components/atoms/EnergyCircle';
+<<<<<<< HEAD
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
@@ -31,6 +32,21 @@ function Home() {
       getPetsAxios();
     }, [])
   );
+=======
+import { useAuthContext } from '../context/AuthContext';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+
+function Home() {
+  const { data, getPetsAxios } = useAuthContext()
+  const [userRole, setUserRole] = useState('');
+  const navigation = useNavigation();
+
+  useFocusEffect(
+    useCallback(() => {
+      getPetsAxios();
+    }, [])
+);
+>>>>>>> d092ca3c25c67803d59352c28f7c53ee893b7ca0
 
   useEffect(() => {
     const fetchUserData = async () => {
